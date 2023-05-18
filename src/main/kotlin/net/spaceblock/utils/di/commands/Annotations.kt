@@ -1,8 +1,4 @@
-package net.spaceblock.utils.di.annotations
-
-import org.bukkit.event.Event
-import org.bukkit.event.EventPriority
-import kotlin.reflect.KClass
+package net.spaceblock.utils.di.commands
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -25,23 +21,9 @@ annotation class TabComplete(
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class Event(
-    val event: KClass<out Event>,
-    val priority: EventPriority = EventPriority.NORMAL,
-    val ignoreCancelled: Boolean = false,
-)
+annotation class HasPermission(val permission: String)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-annotation class OnEnable
-
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-@MustBeDocumented
-annotation class OnDisable
-
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-@MustBeDocumented
-annotation class OnLoad
+annotation class IsOp

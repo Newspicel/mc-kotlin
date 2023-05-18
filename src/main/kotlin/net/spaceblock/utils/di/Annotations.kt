@@ -1,4 +1,4 @@
-package net.spaceblock.utils.di.annotations
+package net.spaceblock.utils.di
 
 import org.springframework.stereotype.Controller
 import javax.inject.Singleton

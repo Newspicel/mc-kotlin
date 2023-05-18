@@ -1,15 +1,15 @@
 package net.spaceblock.utils.di
 
 import net.spaceblock.utils.adventure.text
-import net.spaceblock.utils.di.annotations.Command
-import net.spaceblock.utils.di.annotations.Event
-import net.spaceblock.utils.di.annotations.OnDisable
-import net.spaceblock.utils.di.annotations.OnEnable
-import net.spaceblock.utils.di.annotations.OnLoad
-import net.spaceblock.utils.di.annotations.TabComplete
-import net.spaceblock.utils.di.registry.CommandExecuteRegistry
-import net.spaceblock.utils.di.registry.EventRegistry
-import net.spaceblock.utils.di.registry.StartAndStopRegistry
+import net.spaceblock.utils.di.commands.Command
+import net.spaceblock.utils.di.commands.CommandsHelper
+import net.spaceblock.utils.di.commands.TabComplete
+import net.spaceblock.utils.di.events.Event
+import net.spaceblock.utils.di.events.EventHelper
+import net.spaceblock.utils.di.serverevents.OnDisable
+import net.spaceblock.utils.di.serverevents.OnEnable
+import net.spaceblock.utils.di.serverevents.OnLoad
+import net.spaceblock.utils.di.serverevents.ServerEventsHelper
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
@@ -36,16 +36,16 @@ abstract class DIJavaPlugin : JavaPlugin() {
         val controllers = scanForMinecraftControllers()
         scanForMinecraftAnnotationsInClassesOnLoad(controllers)
 
-        StartAndStopRegistry.triggerOnLoad(this)
+        ServerEventsHelper.triggerOnLoad(this)
     }
 
     final override fun onEnable() {
-        StartAndStopRegistry.triggerOnEnable(this)
+        ServerEventsHelper.triggerOnEnable(this)
         scanForMinecraftAnnotationsInClassesOnEnable(scanForMinecraftControllers())
     }
 
     final override fun onDisable() {
-        StartAndStopRegistry.triggerOnDisable(this)
+        ServerEventsHelper.triggerOnDisable(this)
 
         stopDI()
     }
@@ -70,15 +70,15 @@ abstract class DIJavaPlugin : JavaPlugin() {
                 func.annotations.forEach { annotation ->
                     when (annotation) {
                         is Command -> {
-                            CommandExecuteRegistry.registerCommand(this, annotation, func)
+                            CommandsHelper.registerCommand(this, annotation, func)
                         }
 
                         is TabComplete -> {
-                            CommandExecuteRegistry.registerTabComplete(this, annotation, func)
+                            CommandsHelper.registerTabComplete(this, annotation, func)
                         }
 
                         is Event -> {
-                            EventRegistry.registerEvent(this, annotation, func)
+                            EventHelper.registerEvent(this, annotation, func)
                         }
                     }
                 }
@@ -92,15 +92,15 @@ abstract class DIJavaPlugin : JavaPlugin() {
                 func.annotations.forEach { annotation ->
                     when (annotation) {
                         is OnEnable -> {
-                            StartAndStopRegistry.registerOnEnable(func)
+                            ServerEventsHelper.registerOnEnable(func)
                         }
 
                         is OnDisable -> {
-                            StartAndStopRegistry.registerOnDisable(func)
+                            ServerEventsHelper.registerOnDisable(func)
                         }
 
                         is OnLoad -> {
-                            StartAndStopRegistry.registerOnLoad(func)
+                            ServerEventsHelper.registerOnLoad(func)
                         }
                     }
                 }

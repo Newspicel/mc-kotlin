@@ -1,10 +1,10 @@
-package net.spaceblock.utils.di.registry
+package net.spaceblock.utils.di.serverevents
 
 import net.spaceblock.utils.di.DIJavaPlugin
 import net.spaceblock.utils.di.callOrSuspendCallBy
 import kotlin.reflect.KCallable
 
-object StartAndStopRegistry {
+object ServerEventsHelper {
 
     private val onEnable = mutableListOf<KCallable<*>>()
 

@@ -1,14 +1,13 @@
-package net.spaceblock.utils.di.registry
+package net.spaceblock.utils.di.events
 
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.annotations.Event
 import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.event.EventException
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import kotlin.reflect.KCallable
 
-object EventRegistry {
+object EventHelper {
 
     private val emptyListener = object : Listener {}
 

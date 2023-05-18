@@ -1,19 +1,19 @@
-package net.spaceblock.utils.di.registry
+package net.spaceblock.utils.di.commands
 
 import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.annotations.Command
-import net.spaceblock.utils.di.annotations.TabComplete
 import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandExecutor
+import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KCallable
+import kotlin.reflect.full.findAnnotation
 
-object CommandExecuteRegistry {
+object CommandsHelper {
 
     private val commandMap = Bukkit.getCommandMap()
 
@@ -45,6 +45,11 @@ object CommandExecuteRegistry {
     private fun createCommandExecutor(plugin: DIJavaPlugin, func: KCallable<*>, command: Command): CommandExecutor = CommandExecutor { sender, _, label, args ->
         if (command.label != label) error("This should never happen")
 
+        if (!checkPermissions(sender, func)) {
+            sender.sendMessage(text("You don't have permission to execute this command"))
+            return@CommandExecutor false
+        }
+
         val player: Player? = if (command.playerOnly && sender !is Player) {
             sender.sendMessage(text("This command can only be executed by a player"))
             return@CommandExecutor false
@@ -74,6 +79,10 @@ object CommandExecuteRegistry {
     private fun createTabCompleter(plugin: DIJavaPlugin, func: KCallable<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
         if (tabComplete.label != label) error("This should never happen")
 
+        if (!checkPermissions(sender, func)) {
+            return@TabCompleter emptyList()
+        }
+
         val params = plugin.getParameterMap(func.parameters, sender, label, args)
 
         val result = try {
@@ -91,5 +100,21 @@ object CommandExecuteRegistry {
         }
 
         return@TabCompleter emptyList()
+    }
+
+    @Suppress("RedundantIf")
+    private fun checkPermissions(sender: CommandSender, func: KCallable<*>): Boolean {
+        val permission = func.findAnnotation<HasPermission>()
+        if (permission != null && !sender.hasPermission(permission.permission)) {
+            return false
+        }
+
+
+        val op = func.findAnnotation<IsOp>()
+        if (op != null && !sender.isOp) {
+            return false
+        }
+
+        return true
     }
 }
