@@ -3,7 +3,6 @@ package net.spaceblock.utils.di.commands
 import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.DIJavaPlugin
 import net.spaceblock.utils.di.callOrSuspendCallBy
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
@@ -12,11 +11,9 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KCallable
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.isAccessible
 
 object CommandsHelper {
-
-    private val commandMap = Bukkit.getCommandMap()
-
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KCallable<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
         pluginCommand.aliases = command.aliases.toList()
@@ -34,9 +31,10 @@ object CommandsHelper {
     private fun getBukkitCommand(label: String, plugin: JavaPlugin): PluginCommand {
         return plugin.getCommand(label) ?: run {
             val constructor = PluginCommand::class.constructors.first()
+            constructor.isAccessible = true
             val instance = constructor.call(label, plugin)
 
-            if (!commandMap.register(label, plugin.name, instance)) error("Failed to register command $label")
+            if (!plugin.server.commandMap.register(label, plugin.name, instance)) error("Failed to register command $label")
 
             return@run instance
         }

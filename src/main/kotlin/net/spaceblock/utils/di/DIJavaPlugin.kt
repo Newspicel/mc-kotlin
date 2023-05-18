@@ -55,7 +55,8 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
         val type = parameter.type.classifier as KClass<*>
 
-        val value = additional.firstOrNull { it?.let { it::class == type } ?: false } ?: getDI(type, qualifier)
+        val additionalValue = additional.filterNotNull().firstOrNull { type.isInstance(it) }
+        val value = additionalValue ?: getDI(type, qualifier)
 
         if (value == null && !parameter.isOptional) {
             error("Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
