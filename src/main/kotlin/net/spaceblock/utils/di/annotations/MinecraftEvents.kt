@@ -12,13 +12,14 @@ annotation class Command(
     val aliases: Array<String> = [],
     val description: String = "",
     val playerOnly: Boolean = false,
+    val usage: String = "",
 )
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 annotation class TabComplete(
-    val label: String
+    val label: String,
 )
 
 @Target(AnnotationTarget.FUNCTION)
@@ -27,6 +28,7 @@ annotation class TabComplete(
 annotation class Event(
     val event: KClass<out Event>,
     val priority: EventPriority = EventPriority.NORMAL,
+    val ignoreCancelled: Boolean = false,
 )
 
 @Target(AnnotationTarget.FUNCTION)
@@ -43,4 +45,3 @@ annotation class OnDisable
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 annotation class OnLoad
-

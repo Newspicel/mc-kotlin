@@ -4,6 +4,7 @@ import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.DIJavaPlugin
 import net.spaceblock.utils.di.annotations.Command
 import net.spaceblock.utils.di.annotations.TabComplete
+import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.PluginCommand
@@ -19,7 +20,8 @@ object CommandExecuteRegistry {
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KCallable<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
         pluginCommand.aliases = command.aliases.toList()
-        pluginCommand.description = command.description
+        pluginCommand.description = command.description.ifEmpty { "No description provided" }
+        pluginCommand.usage = command.usage.ifEmpty { "Usage: /${command.label}" }
 
         pluginCommand.setExecutor(createCommandExecutor(plugin, func, command))
     }
@@ -55,7 +57,7 @@ object CommandExecuteRegistry {
         val params = plugin.getParameterMap(func.parameters, player, sender, label, args)
 
         val result = try {
-            func.callBy(params)
+            func.callOrSuspendCallBy(params)
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command"))
             e.printStackTrace()
@@ -75,7 +77,7 @@ object CommandExecuteRegistry {
         val params = plugin.getParameterMap(func.parameters, sender, label, args)
 
         val result = try {
-            func.callBy(params)
+            func.callOrSuspendCallBy(params)
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command"))
             e.printStackTrace()
@@ -90,5 +92,4 @@ object CommandExecuteRegistry {
 
         return@TabCompleter emptyList()
     }
-
 }

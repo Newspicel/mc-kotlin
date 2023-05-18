@@ -1,47 +1,47 @@
 package net.spaceblock.utils.di.registry
 
 import net.spaceblock.utils.di.DIJavaPlugin
-import org.bukkit.plugin.java.JavaPlugin
-import kotlin.reflect.KFunction
+import net.spaceblock.utils.di.callOrSuspendCallBy
+import kotlin.reflect.KCallable
 
 object StartAndStopRegistry {
 
-    private val onEnable = mutableListOf<KFunction<*>>()
+    private val onEnable = mutableListOf<KCallable<*>>()
 
-    private val onDisable = mutableListOf<KFunction<*>>()
+    private val onDisable = mutableListOf<KCallable<*>>()
 
-    private val onLoad = mutableListOf<KFunction<*>>()
+    private val onLoad = mutableListOf<KCallable<*>>()
 
-    fun registerOnEnable(function: KFunction<*>) {
+    fun registerOnEnable(function: KCallable<*>) {
         onEnable.add(function)
     }
 
-    fun registerOnDisable(function: KFunction<*>) {
+    fun registerOnDisable(function: KCallable<*>) {
         onDisable.add(function)
     }
 
-    fun registerOnLoad(function: KFunction<*>) {
+    fun registerOnLoad(function: KCallable<*>) {
         onLoad.add(function)
     }
 
     fun triggerOnEnable(plugin: DIJavaPlugin) {
         onEnable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            function.callBy(params)
+            function.callOrSuspendCallBy(params)
         }
     }
 
     fun triggerOnDisable(plugin: DIJavaPlugin) {
         onDisable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            function.callBy(params)
+            function.callOrSuspendCallBy(params)
         }
     }
 
     fun triggerOnLoad(plugin: DIJavaPlugin) {
         onLoad.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            function.callBy(params)
+            function.callOrSuspendCallBy(params)
         }
     }
 }

@@ -8,4 +8,4 @@ import javax.inject.Singleton
 @MustBeDocumented
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.CLASS)
-annotation class MinecraftController()
+annotation class MinecraftController

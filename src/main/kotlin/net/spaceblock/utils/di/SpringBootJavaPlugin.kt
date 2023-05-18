@@ -2,30 +2,48 @@ package net.spaceblock.utils.di
 
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
 import org.bukkit.command.Command
-import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
-import org.springframework.context.support.GenericApplicationContext
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.beans
 import java.util.logging.Logger
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
 
-abstract class SpringBootJavaPlugin: JavaPlugin() {
+abstract class SpringBootJavaPlugin : DIJavaPlugin() {
 
-    private lateinit var context: GenericApplicationContext
+    private lateinit var context: AnnotationConfigApplicationContext
 
-    final override fun onEnable() {
-        this.startSpringBoot()
+    final override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
+        return if (qualifier == null) {
+            context.getBean(type.java)
+        } else {
+            context.getBean(qualifier, type.java)
+        }
     }
 
-    final override fun onDisable() {
-        context.close()
+    final override fun scanForMinecraftControllers(packagePath: String): List<KClass<*>> {
+        context.scan(packagePath)
+
+        return context.beanDefinitionNames
+            .mapNotNull { context.getType(it) }
+            .map { it.kotlin }
+            .filter { it.isSubclassOf(Command::class) }
     }
 
-    private fun startSpringBoot() {
-        this.logger.info("Starting Spring Boot")
-        context = GenericApplicationContext()
+    final override fun getQualifier(annotation: List<Annotation>): String? {
+        return annotation
+            .filter { it.annotationClass == Qualifier::class }
+            .map { it as Qualifier }
+            .firstOrNull()
+            ?.value
+    }
+
+    final override fun startDI(mcSingletons: Map<KClass<*>, Any>) {
+        context = AnnotationConfigApplicationContext()
 
         val beans = beans {
-            bean<JavaPlugin> (isPrimary = true) { this@SpringBootJavaPlugin }
+            bean<JavaPlugin>(isPrimary = true) { this@SpringBootJavaPlugin }
             bean<JavaPlugin>(name = "plugin") { this@SpringBootJavaPlugin }
             bean<Logger>(isPrimary = true) { this@SpringBootJavaPlugin.logger }
             bean<ComponentLogger>(isPrimary = true) { this@SpringBootJavaPlugin.componentLogger }
@@ -33,24 +51,10 @@ abstract class SpringBootJavaPlugin: JavaPlugin() {
 
         beans.initialize(context)
 
-        //Search for Beans and @Configuration classes
         context.start()
-
-
-
-
-
-        this.logger.info("Started Spring Boot")
     }
 
-    // Final Stuff
-
-    final override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
-        return super.onCommand(sender, command, label, args)
+    final override fun stopDI() {
+        context.stop()
     }
-
-    final override fun onTabComplete(sender: CommandSender, command: Command, alias: String, args: Array<out String>?): MutableList<String>? {
-        return super.onTabComplete(sender, command, alias, args)
-    }
-
 }
