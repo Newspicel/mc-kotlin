@@ -34,19 +34,19 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
         startDI(singletons)
         val controllers = scanForMinecraftControllers()
-        scanForMinecraftAnnotationsInClasses(controllers)
+        scanForMinecraftAnnotationsInClassesOnLoad(controllers)
 
         StartAndStopRegistry.triggerOnLoad(this)
     }
 
     final override fun onEnable() {
         StartAndStopRegistry.triggerOnEnable(this)
+        scanForMinecraftAnnotationsInClassesOnEnable(scanForMinecraftControllers())
     }
 
     final override fun onDisable() {
         StartAndStopRegistry.triggerOnDisable(this)
 
-        // Stop DI
         stopDI()
     }
 
@@ -64,9 +64,8 @@ abstract class DIJavaPlugin : JavaPlugin() {
         value
     }
 
-    private fun scanForMinecraftAnnotationsInClasses(classes: List<KClass<*>>) {
+    private fun scanForMinecraftAnnotationsInClassesOnEnable(classes: List<KClass<*>>) {
         classes.forEach { clazz ->
-            // Get Functions
             clazz.members.forEach { func ->
                 func.annotations.forEach { annotation ->
                     when (annotation) {
@@ -81,7 +80,17 @@ abstract class DIJavaPlugin : JavaPlugin() {
                         is Event -> {
                             EventRegistry.registerEvent(this, annotation, func)
                         }
+                    }
+                }
+            }
+        }
+    }
 
+    private fun scanForMinecraftAnnotationsInClassesOnLoad(classes: List<KClass<*>>) {
+        classes.forEach { clazz ->
+            clazz.members.forEach { func ->
+                func.annotations.forEach { annotation ->
+                    when (annotation) {
                         is OnEnable -> {
                             StartAndStopRegistry.registerOnEnable(func)
                         }
