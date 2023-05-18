@@ -29,7 +29,6 @@ abstract class DIJavaPlugin : JavaPlugin() {
     override fun onLoad() {
         val singletons = mapOf<KClass<*>, Any>(
             JavaPlugin::class to this,
-
         )
 
         startDI(singletons)
