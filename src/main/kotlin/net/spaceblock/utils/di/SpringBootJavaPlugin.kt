@@ -1,6 +1,8 @@
 package net.spaceblock.utils.di
 
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger
+import org.bukkit.Bukkit
+import org.bukkit.Server
 import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 import org.springframework.beans.factory.annotation.Qualifier
@@ -44,9 +46,10 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
 
         val beans = beans {
             bean<JavaPlugin>(isPrimary = true) { this@SpringBootJavaPlugin }
-            bean<JavaPlugin>(name = "plugin") { this@SpringBootJavaPlugin }
+            bean<JavaPlugin>(name = this@SpringBootJavaPlugin.name) { this@SpringBootJavaPlugin }
             bean<Logger>(isPrimary = true) { this@SpringBootJavaPlugin.logger }
             bean<ComponentLogger>(isPrimary = true) { this@SpringBootJavaPlugin.componentLogger }
+            bean<Server> { this@SpringBootJavaPlugin.server }
         }
 
         beans.initialize(context)
