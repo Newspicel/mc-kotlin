@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "net.spaceblock.utils"
-version = "1.0-SNAPSHOT"
+version = properties["version"] as String
 
 val kotlinCoroutinesVersion = "1.7.1"
 val springVersion = "6.0.9"

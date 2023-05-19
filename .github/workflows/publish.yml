@@ -1,9 +1,9 @@
 name: Gradle Publish
 
 on:
-  push:
-    tags:
-      - '*'
+  release:
+      types: [created]
+  workflow_dispatch:
 
 permissions:
   packages: write
@@ -31,12 +31,9 @@ jobs:
       - name: Gradle Publish
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: publish
+          arguments: publish -Dorg.gradle.project.version=${{ github.event.release.tag_name }}
 
-      - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@v2
+      - name: Upload a Build Artifact
+        uses: softprops/action-gh-release@v1
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: build/libs/*.jar
-          asset_name: mc-kotlin-${{ github.ref }}.jar
-          tag: ${{ github.ref }}
+          files: build/libs/*.jar
