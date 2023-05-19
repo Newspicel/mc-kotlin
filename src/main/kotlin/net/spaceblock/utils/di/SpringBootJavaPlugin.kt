@@ -23,6 +23,7 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
     }
 
     final override fun scanForMinecraftControllers(path: String): List<KClass<*>> {
+        logger.info("Scanning for Minecraft controllers in $path")
         context.scan(path)
 
         return context.beanDefinitionNames
@@ -41,6 +42,7 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
     }
 
     final override fun startDI() {
+        logger.info("Starting DI")
         context = AnnotationConfigApplicationContext()
 
         val beans = beans {
@@ -57,6 +59,7 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
     }
 
     final override fun stopDI() {
+        logger.info("Stopping DI")
         context.stop()
     }
 }
