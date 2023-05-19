@@ -107,7 +107,6 @@ object CommandsHelper {
             return false
         }
 
-
         val op = func.findAnnotation<IsOp>()
         if (op != null && !sender.isOp) {
             return false

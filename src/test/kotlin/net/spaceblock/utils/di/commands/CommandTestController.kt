@@ -2,12 +2,9 @@ package net.spaceblock.utils.di.commands
 
 import kotlinx.coroutines.delay
 import net.spaceblock.utils.di.MinecraftController
-import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 @MinecraftController
-class CommandTestController(
-) {
+class CommandTestController() {
 
     var i = 0
 
@@ -19,7 +16,7 @@ class CommandTestController(
 
     @TabComplete("test")
     fun testTab(): List<String> {
-       return listOf("test")
+        return listOf("test")
     }
 
     @Command("test2", playerOnly = true)
@@ -51,4 +48,9 @@ class CommandTestController(
         return false
     }
 
+    @Command("error")
+    suspend fun error(): Boolean {
+        delay(1)
+        throw Exception("test")
+    }
 }

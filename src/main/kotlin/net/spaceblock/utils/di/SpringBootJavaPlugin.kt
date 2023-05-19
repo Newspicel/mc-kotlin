@@ -22,11 +22,12 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
         }
     }
 
-    final override fun scanForMinecraftControllers(packagePath: String): List<KClass<*>> {
-        context.scan(packagePath)
+    final override fun scanForMinecraftControllers(path: String): List<KClass<*>> {
+        context.scan(path)
 
         return context.beanDefinitionNames
             .mapNotNull { context.getType(it) }
+            .filter { it.packageName.startsWith(path) }
             .map { it.kotlin }
             .filter { it.java.isAnnotationPresent(MinecraftController::class.java) }
     }

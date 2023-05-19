@@ -1,5 +1,6 @@
 package net.spaceblock.utils.di.events
 
+import io.papermc.paper.event.player.AsyncChatEvent
 import net.spaceblock.utils.di.MinecraftController
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerKickEvent
@@ -19,4 +20,9 @@ class EventsTestController {
         test--
     }
 
+    @Event(AsyncChatEvent::class)
+    fun onMessage(event: AsyncChatEvent) {
+        event.isCancelled = true
+        throw Exception("test")
+    }
 }

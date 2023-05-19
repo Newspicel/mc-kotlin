@@ -1,6 +1,5 @@
 package net.spaceblock.utils.di.serverevents
 
-
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented

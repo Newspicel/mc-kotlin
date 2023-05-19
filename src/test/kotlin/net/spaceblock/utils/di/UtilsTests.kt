@@ -6,23 +6,18 @@ import io.kotest.assertions.print.print
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import kotlinx.coroutines.delay
-import net.spaceblock.utils.di.commands.CommandTestController
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import java.util.logging.Logger
-import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.functions
 import kotlin.test.Test
-
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 open class UtilsTests {
 
     private lateinit var server: ServerMock
     private lateinit var plugin: TestPlugin
-
 
     @BeforeEach
     fun setUp() {

@@ -2,11 +2,9 @@ package net.spaceblock.utils.di.commands
 
 import be.seeseemelk.mockbukkit.MockBukkit
 import be.seeseemelk.mockbukkit.ServerMock
-import io.kotest.assertions.print.print
 import io.kotest.matchers.shouldBe
 import net.spaceblock.utils.di.TestPlugin
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -17,7 +15,6 @@ open class CommandTests {
 
     private lateinit var server: ServerMock
     private lateinit var plugin: TestPlugin
-
 
     @BeforeEach
     fun setUp() {
@@ -61,6 +58,20 @@ open class CommandTests {
         server.executePlayer("test2").assertSucceeded()
         server.executePlayer("test3").assertFailed()
         server.executePlayer("test4").assertFailed()
+    }
+
+    @Test
+    fun `check if is player`() {
+        server.executeConsole("test").assertFailed()
+        server.addPlayer()
+        server.executePlayer("test").assertSucceeded()
+    }
+
+    @Test
+    fun `check if error handling works`() {
+        server.addPlayer()
+        server.executePlayer("error").assertFailed()
+        server.executePlayer("test").assertSucceeded()
     }
 
     @Test

@@ -6,7 +6,6 @@ import io.kotest.matchers.shouldBe
 import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.TestPlugin
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -16,7 +15,6 @@ open class EventsTests {
 
     private lateinit var server: ServerMock
     private lateinit var plugin: TestPlugin
-
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +29,6 @@ open class EventsTests {
 
     @Test
     fun `is event registered`() {
-
         val eventsTestController = plugin.getDI(EventsTestController::class)
         val player = server.addPlayer()
         eventsTestController?.test shouldBe 1
@@ -41,5 +38,10 @@ open class EventsTests {
         server.addPlayer()
         eventsTestController?.test shouldBe 3
     }
-}
 
+    @Test
+    fun `check errors`() {
+        val player = server.addPlayer()
+        player.sendMessage(text("test"))
+    }
+}
