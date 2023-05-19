@@ -59,7 +59,7 @@ publishing {
     repositories {
         maven {
             name = "github"
-            url = uri("https://maven.pkg.github.com/spaceblocknet/mc-utils")
+            url = uri("https://maven.pkg.github.com/spaceblocknet/mc-kotlin")
             credentials {
                 username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
