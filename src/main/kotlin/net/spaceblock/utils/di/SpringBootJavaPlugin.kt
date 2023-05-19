@@ -26,11 +26,15 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
         logger.info("Scanning for Minecraft controllers in $path")
         context.scan(path)
 
-        return context.beanDefinitionNames
+        val classes = context.beanDefinitionNames
             .mapNotNull { context.getType(it) }
             .filter { it.packageName.startsWith(path) }
             .map { it.kotlin }
             .filter { it.java.isAnnotationPresent(MinecraftController::class.java) }
+
+        logger.info("Found ${classes.size} Minecraft controllers in $path")
+
+        return classes
     }
 
     final override fun getQualifier(annotation: List<Annotation>): String? {
