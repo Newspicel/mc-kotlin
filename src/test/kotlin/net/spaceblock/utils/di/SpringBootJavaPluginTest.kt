@@ -9,8 +9,6 @@ import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInstance
 import org.springframework.beans.factory.annotation.Qualifier
@@ -58,12 +56,12 @@ class SpringBootJavaPluginTest {
 }
 
 @Service
-class TypeA()
+class TypeA
 
 @Repository
-class TypeB()
+class TypeB
 
-class TypeC()
+class TypeC
 
 @Qualifier("test")
-class TypeD()
+class TypeD
