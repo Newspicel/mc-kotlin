@@ -8,6 +8,7 @@ version = "1.0-SNAPSHOT"
 val kotlinCoroutinesVersion = "1.7.1"
 val springVersion = "6.0.9"
 val koTestVersion = "5.6.2"
+val guiceVersion = "6.0.0"
 
 repositories {
     mavenCentral()
@@ -30,7 +31,6 @@ dependencies {
 
     // Spring
     implementation("org.springframework:spring-context:$springVersion")
-    implementation("org.springframework:spring-core:$springVersion")
     implementation("org.springframework:spring-beans:$springVersion")
 
     testImplementation(kotlin("test"))

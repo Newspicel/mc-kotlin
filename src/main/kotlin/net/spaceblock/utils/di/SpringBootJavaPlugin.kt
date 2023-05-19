@@ -39,14 +39,13 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
             ?.value
     }
 
-    final override fun startDI(mcSingletons: Map<KClass<*>, Any>) {
+    final override fun startDI() {
         context = AnnotationConfigApplicationContext()
 
         val beans = beans {
             bean<JavaPlugin>(isPrimary = true) { this@SpringBootJavaPlugin }
             bean<JavaPlugin>(name = this@SpringBootJavaPlugin.name) { this@SpringBootJavaPlugin }
-            bean<Logger>(isPrimary = true) { this@SpringBootJavaPlugin.logger }
-            //bean<ComponentLogger>(isPrimary = true) { this@SpringBootJavaPlugin.componentLogger }
+            bean<Logger>(isPrimary = true, name = this@SpringBootJavaPlugin.name) { this@SpringBootJavaPlugin.logger }
             bean<Server> { this@SpringBootJavaPlugin.server }
         }
 

@@ -17,7 +17,7 @@ import kotlin.reflect.KParameter
 
 abstract class DIJavaPlugin : JavaPlugin() {
 
-    abstract fun startDI(mcSingletons: Map<KClass<*>, Any>)
+    abstract fun startDI()
     abstract fun stopDI()
 
     abstract fun scanForMinecraftControllers(packagePath: String = projectPackagePath): List<KClass<*>>
@@ -27,11 +27,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
     abstract val projectPackagePath: String
 
     override fun onLoad() {
-        val singletons = mapOf<KClass<*>, Any>(
-            JavaPlugin::class to this,
-        )
-
-        startDI(singletons)
+        startDI()
         val controllers = scanForMinecraftControllers()
         scanForMinecraftAnnotationsInClassesOnLoad(controllers)
 

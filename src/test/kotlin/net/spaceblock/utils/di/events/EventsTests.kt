@@ -1,0 +1,44 @@
+package net.spaceblock.utils.di.events
+
+import be.seeseemelk.mockbukkit.MockBukkit
+import be.seeseemelk.mockbukkit.ServerMock
+import io.kotest.matchers.shouldBe
+import net.spaceblock.utils.di.TestPlugin
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+open class EventsTests {
+
+    private lateinit var server: ServerMock
+    private lateinit var plugin: TestPlugin
+
+
+    @BeforeEach
+    fun setUp() {
+        server = MockBukkit.mock()
+        plugin = MockBukkit.load(TestPlugin::class.java)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        MockBukkit.unmock()
+    }
+
+    @Test
+    fun `is event registered`() {
+
+        val eventsTestController = plugin.getDI(EventsTestController::class)
+        val player = server.addPlayer()
+        eventsTestController?.test shouldBe 1
+        player.kickPlayer("test")
+        server.addPlayer()
+        server.addPlayer()
+        server.addPlayer()
+        eventsTestController?.test shouldBe 3
+    }
+}
+
