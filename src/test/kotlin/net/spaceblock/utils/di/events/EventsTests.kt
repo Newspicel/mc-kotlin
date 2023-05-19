@@ -3,6 +3,7 @@ package net.spaceblock.utils.di.events
 import be.seeseemelk.mockbukkit.MockBukkit
 import be.seeseemelk.mockbukkit.ServerMock
 import io.kotest.matchers.shouldBe
+import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.TestPlugin
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -34,7 +35,7 @@ open class EventsTests {
         val eventsTestController = plugin.getDI(EventsTestController::class)
         val player = server.addPlayer()
         eventsTestController?.test shouldBe 1
-        player.kickPlayer("test")
+        player.kick()
         server.addPlayer()
         server.addPlayer()
         server.addPlayer()

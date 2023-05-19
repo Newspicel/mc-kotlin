@@ -32,7 +32,7 @@ open class CommandTests {
 
     @Test
     fun `is command registered`() {
-        val player = server.addPlayer()
+        server.addPlayer()
         server.executePlayer("test").assertSucceeded()
         server.executePlayer("test2").assertSucceeded()
         try {
