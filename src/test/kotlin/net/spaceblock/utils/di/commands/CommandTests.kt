@@ -40,6 +40,12 @@ open class CommandTests {
     }
 
     @Test
+    fun `check if alias is registered`() {
+        server.addPlayer()
+        server.executePlayer("test-alias").assertSucceeded()
+    }
+
+    @Test
     fun `check command is run`() {
         val ctc = plugin.getDI(CommandTestController::class)
         ctc?.i = 0

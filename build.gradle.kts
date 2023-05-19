@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.20"
+    `maven-publish`
 }
 
 group = "net.spaceblock.utils"
@@ -20,6 +21,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+
     implementation("org.apache.logging.log4j:log4j-core:2.20.0")
 
     // KReflection
@@ -37,9 +39,7 @@ dependencies {
     testImplementation(kotlin("test-junit5"))
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
     testImplementation("com.github.seeseemelk:MockBukkit-v1.19:3.1.0")
-    testImplementation("io.kotest:kotest-runner-junit5:$koTestVersion")
-    testImplementation("io.kotest:kotest-assertions-core:$koTestVersion")
-    testImplementation("io.kotest:kotest-property:$koTestVersion")
+    testImplementation("io.kotest:kotest-assertions-core-jvm:$koTestVersion")
 }
 
 tasks.test {
@@ -48,4 +48,22 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+        }
+    }
+    repositories {
+        maven {
+            name = "github"
+            url = uri("https://maven.pkg.github.com/spaceblocknet/mc-utils")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+            }
+        }
+    }
 }

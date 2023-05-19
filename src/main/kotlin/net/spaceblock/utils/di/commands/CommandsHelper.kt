@@ -21,6 +21,10 @@ object CommandsHelper {
         pluginCommand.usage = command.usage.ifEmpty { "Usage: /${command.label}" }
 
         pluginCommand.setExecutor(createCommandExecutor(plugin, func, command))
+
+        if (!pluginCommand.isRegistered) {
+            if (!plugin.server.commandMap.register(command.label, plugin.name, pluginCommand)) error("Failed to register command $pluginCommand")
+        }
     }
 
     fun registerTabComplete(plugin: DIJavaPlugin, tabComplete: TabComplete, func: KCallable<*>) {
@@ -32,11 +36,8 @@ object CommandsHelper {
         return plugin.getCommand(label) ?: run {
             val constructor = PluginCommand::class.constructors.first()
             constructor.isAccessible = true
-            val instance = constructor.call(label, plugin)
 
-            if (!plugin.server.commandMap.register(label, plugin.name, instance)) error("Failed to register command $label")
-
-            return@run instance
+            return@run constructor.call(label, plugin)
         }
     }
 

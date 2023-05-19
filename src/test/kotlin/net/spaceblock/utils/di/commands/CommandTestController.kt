@@ -8,7 +8,7 @@ class CommandTestController() {
 
     var i = 0
 
-    @Command("test", playerOnly = true)
+    @Command("test", playerOnly = true, aliases = ["test-alias"])
     fun test() {
         println("test")
         i++
