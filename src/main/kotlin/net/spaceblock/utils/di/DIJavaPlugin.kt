@@ -31,9 +31,12 @@ abstract class DIJavaPlugin : JavaPlugin() {
     abstract fun test()
 
     override fun onLoad() {
-        startDI()
         controllers = scanForMinecraftControllers()
+        test()
+        startDI()
         scanForMinecraftAnnotationsInClassesOnLoad(controllers)
+
+
 
         ServerEventsHelper.triggerOnLoad(this)
     }
@@ -41,7 +44,6 @@ abstract class DIJavaPlugin : JavaPlugin() {
     final override fun onEnable() {
         ServerEventsHelper.triggerOnEnable(this)
         scanForMinecraftAnnotationsInClassesOnEnable(controllers)
-        test()
     }
 
     final override fun onDisable() {
