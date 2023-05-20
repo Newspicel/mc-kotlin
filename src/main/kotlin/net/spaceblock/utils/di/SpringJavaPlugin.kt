@@ -25,9 +25,9 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         }
     }
 
-    final override fun scanForMinecraftControllers(path: String) {
-        logger.info("Scanning for Minecraft controllers in $path")
-        context.scan(path)
+    final override fun scanForMinecraftControllers(packagePath: String) {
+        logger.info("Scanning for Minecraft controllers in $packagePath")
+        context.scan(packagePath)
     }
 
     final override fun getMinecraftControllers(): List<KClass<*>> = context.beanDefinitionNames
