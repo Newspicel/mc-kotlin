@@ -12,6 +12,7 @@ import net.spaceblock.utils.di.serverevents.OnLoad
 import net.spaceblock.utils.di.serverevents.ServerEventsHelper
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 
@@ -28,7 +29,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
     abstract fun getQualifier(annotation: List<Annotation>): String?
 
     abstract val projectPackagePath: String
-
+    
     private lateinit var controllers: List<KClass<*>>
 
     override fun onLoad() {

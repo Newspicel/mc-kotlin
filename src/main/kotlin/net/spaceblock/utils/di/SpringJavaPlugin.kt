@@ -11,6 +11,8 @@ import kotlin.reflect.full.findAnnotations
 
 abstract class SpringJavaPlugin : DIJavaPlugin() {
 
+    abstract fun test(applicationContext: AnnotationConfigApplicationContext)
+
     private lateinit var context: AnnotationConfigApplicationContext
 
     final override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
@@ -28,7 +30,7 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         context.scan(path)
     }
 
-    override fun getMinecraftControllers(): List<KClass<*>> = context.beanDefinitionNames
+    final override fun getMinecraftControllers(): List<KClass<*>> = context.beanDefinitionNames
         .mapNotNull { context.getType(it) }
         .map { it.kotlin }
         .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
@@ -41,7 +43,7 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
             ?.value
     }
 
-    override fun initDI() {
+    final override fun initDI() {
         logger.info("Initializing Dependency Injection")
         context = AnnotationConfigApplicationContext()
     }
@@ -56,6 +58,8 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         }
 
         beans.initialize(context)
+
+        test(context)
 
         context.refresh()
         context.beanDefinitionNames.forEach { logger.info("Found bean $it") }
