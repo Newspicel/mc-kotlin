@@ -44,8 +44,8 @@ class SpringJavaPluginTest {
 
     @Test
     fun scanForMinecraftControllers() {
-        plugin.scanForMinecraftControllers("net.spaceblock.utils.di.commands").size shouldBe 1
-        plugin.scanForMinecraftControllers("net.spaceblock.utils.di.not.exist").size shouldBe 0
+        plugin.scanForMinecraftControllers("net.spaceblock.utils.di.commands").size shouldBe 3
+        plugin.scanForMinecraftControllers("net.spaceblock.utils.di.not.exist").size shouldBe 3
     }
 
     @Test
