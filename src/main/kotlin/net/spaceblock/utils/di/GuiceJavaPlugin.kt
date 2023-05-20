@@ -41,7 +41,6 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 
     override fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String): List<KClass<*>> {
         val cfg = ConfigurationBuilder()
-            .forPackages(packagePath)
             .setUrls(ClasspathHelper.forClassLoader(this.classLoader))
             .setClassLoaders(arrayOf(this.classLoader))
             .setScanners(Scanners.TypesAnnotated)
