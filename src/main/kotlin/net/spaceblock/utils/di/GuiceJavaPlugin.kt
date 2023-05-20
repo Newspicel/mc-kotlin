@@ -38,6 +38,7 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 
     override fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String): List<KClass<*>> {
         val reflections = Reflections(packagePath)
+        reflections.getTypesAnnotatedWith(MinecraftController::class.java).forEach { println(it) }
         return annotation
             .map { reflections.getTypesAnnotatedWith(it.java) }
             .flatten()

@@ -36,7 +36,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
         initDI()
         logger.info("Scanning for Minecraft controllers in $projectPackagePath")
         stereotypesClasses = scanForMinecraftStereotypes(stereotypes, projectPackagePath)
-        logger.info("Found ${stereotypesClasses.size} Minecraft controllers in $projectPackagePath")
+        logger.info("Found ${stereotypesClasses.size} Minecraft Stereotypes in $projectPackagePath")
         startDI()
         scanForMinecraftAnnotationsInClassesOnLoad(stereotypesClasses)
 
