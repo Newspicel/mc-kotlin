@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 
 abstract class SpringJavaPlugin : DIJavaPlugin() {
 
-    lateinit var context: AnnotationConfigApplicationContext
+   private lateinit var context: AnnotationConfigApplicationContext
 
     final override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
         return if (qualifier != null && context.containsBean(qualifier)) {
@@ -22,22 +22,16 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         }
     }
 
-    final override fun scanForMinecraftControllers(path: String): List<KClass<*>> {
+    final override fun scanForMinecraftControllers(path: String) {
         logger.info("Scanning for Minecraft controllers in $path")
         context.scan(path)
-
-        context.beanDefinitionNames.forEach { logger.info(it) }
-
-        val classes = context.beanDefinitionNames
-            .mapNotNull { context.getType(it) }
-            //.filter { it.packageName.startsWith(path) }
-            .map { it.kotlin }
-            .filter { it.java.isAnnotationPresent(MinecraftController::class.java) }
-
-        logger.info("Found ${classes.size} Minecraft controllers in $path")
-
-        return classes
     }
+
+    override fun getMinecraftControllers(): List<KClass<*>> = context.beanDefinitionNames
+        .mapNotNull { context.getType(it) }
+        //.filter { it.packageName.startsWith(path) }
+        .map { it.kotlin }
+        .filter { it.java.isAnnotationPresent(MinecraftController::class.java) }
 
     final override fun getQualifier(annotation: List<Annotation>): String? {
         return annotation
@@ -47,8 +41,8 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
             ?.value
     }
 
-    final override fun startDI() {
-        logger.info("Starting DI")
+    override fun initDI() {
+        logger.info("Initializing DI")
         context = AnnotationConfigApplicationContext()
 
         val beans = beans {
@@ -59,7 +53,10 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         }
 
         beans.initialize(context)
+    }
 
+    final override fun startDI() {
+        logger.info("Starting DI")
         context.refresh()
         context.start()
     }

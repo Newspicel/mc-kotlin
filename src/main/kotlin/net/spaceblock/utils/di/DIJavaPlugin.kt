@@ -17,10 +17,13 @@ import kotlin.reflect.KParameter
 
 abstract class DIJavaPlugin : JavaPlugin() {
 
+
+    abstract fun initDI()
     abstract fun startDI()
     abstract fun stopDI()
 
-    abstract fun scanForMinecraftControllers(packagePath: String = projectPackagePath): List<KClass<*>>
+    abstract fun scanForMinecraftControllers(packagePath: String = projectPackagePath)
+    abstract fun getMinecraftControllers(): List<KClass<*>>
     abstract fun <T : Any> getDI(type: KClass<T>, qualifier: String? = null): T?
     abstract fun getQualifier(annotation: List<Annotation>): String?
 
@@ -28,15 +31,13 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
     private lateinit var controllers: List<KClass<*>>
 
-    abstract fun test()
-
     override fun onLoad() {
-        controllers = scanForMinecraftControllers()
-        test()
+        initDI()
+        scanForMinecraftControllers(projectPackagePath)
         startDI()
+        controllers = getMinecraftControllers()
+        logger.info("Found ${controllers.size} Minecraft controllers in $projectPackagePath")
         scanForMinecraftAnnotationsInClassesOnLoad(controllers)
-
-
 
         ServerEventsHelper.triggerOnLoad(this)
     }
