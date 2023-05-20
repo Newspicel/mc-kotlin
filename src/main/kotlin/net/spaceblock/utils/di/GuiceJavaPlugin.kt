@@ -11,6 +11,9 @@ import com.google.inject.util.Modules
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections
+import org.reflections.scanners.Scanners
+import org.reflections.util.ClasspathHelper
+import org.reflections.util.ConfigurationBuilder
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotations
@@ -37,14 +40,13 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
     override fun stopDI() {}
 
     override fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String): List<KClass<*>> {
-        val reflections = Reflections(packagePath)
-        reflections.store.forEach { (key, m) ->
-            m.forEach { (k, v) ->
-                v.forEach {
-                    println("key: $key, k: $k, v: $it")
-                }
-            }
-        }
+        val cfg = ConfigurationBuilder()
+            .forPackages(packagePath)
+            .setUrls(ClasspathHelper.forClassLoader(this.classLoader))
+            .setClassLoaders(arrayOf(this.classLoader))
+            .setScanners(Scanners.TypesAnnotated)
+
+        val reflections = Reflections(cfg)
         return annotation
             .map { reflections.getTypesAnnotatedWith(it.java) }
             .flatten()
