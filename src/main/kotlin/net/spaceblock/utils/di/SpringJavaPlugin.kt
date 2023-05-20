@@ -58,6 +58,7 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         beans.initialize(context)
 
         context.refresh()
+        context.beanDefinitionNames.forEach { logger.info("Found bean $it") }
         context.start()
     }
 
