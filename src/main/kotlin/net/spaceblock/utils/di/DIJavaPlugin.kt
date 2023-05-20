@@ -28,6 +28,8 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
     private lateinit var controllers: List<KClass<*>>
 
+    abstract fun test()
+
     override fun onLoad() {
         startDI()
         controllers = scanForMinecraftControllers()
@@ -39,6 +41,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
     final override fun onEnable() {
         ServerEventsHelper.triggerOnEnable(this)
         scanForMinecraftAnnotationsInClassesOnEnable(controllers)
+        test()
     }
 
     final override fun onDisable() {

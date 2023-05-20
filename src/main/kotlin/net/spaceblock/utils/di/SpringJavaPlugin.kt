@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
 
 abstract class SpringJavaPlugin : DIJavaPlugin() {
 
-    private lateinit var context: AnnotationConfigApplicationContext
+    lateinit var context: AnnotationConfigApplicationContext
 
     final override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
         return if (qualifier != null && context.containsBean(qualifier)) {
@@ -25,6 +25,8 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
     final override fun scanForMinecraftControllers(path: String): List<KClass<*>> {
         logger.info("Scanning for Minecraft controllers in $path")
         context.scan(path)
+
+        context.beanDefinitionNames.forEach { logger.info(it) }
 
         val classes = context.beanDefinitionNames
             .mapNotNull { context.getType(it) }
