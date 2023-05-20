@@ -29,7 +29,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
     abstract fun getQualifier(annotation: List<Annotation>): String?
 
     abstract val projectPackagePath: String
-    
+
     private lateinit var controllers: List<KClass<*>>
 
     override fun onLoad() {
