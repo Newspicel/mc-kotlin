@@ -12,40 +12,40 @@ import net.spaceblock.utils.di.serverevents.OnLoad
 import net.spaceblock.utils.di.serverevents.ServerEventsHelper
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
+import kotlin.reflect.full.findAnnotations
 
 abstract class DIJavaPlugin : JavaPlugin() {
 
+    private val stereotypes = arrayOf(MinecraftController::class, Service::class, Repository::class)
 
     abstract fun initDI()
     abstract fun startDI()
     abstract fun stopDI()
 
-    abstract fun scanForMinecraftControllers(packagePath: String = projectPackagePath)
-    abstract fun getMinecraftControllers(): List<KClass<*>>
+    abstract fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String = projectPackagePath): List<KClass<*>>
     abstract fun <T : Any> getDI(type: KClass<T>, qualifier: String? = null): T?
     abstract fun getQualifier(annotation: List<Annotation>): String?
 
     abstract val projectPackagePath: String
 
-    private lateinit var controllers: List<KClass<*>>
+    protected lateinit var stereotypesClasses: List<KClass<*>>
 
     override fun onLoad() {
         initDI()
-        scanForMinecraftControllers(projectPackagePath)
+        logger.info("Scanning for Minecraft controllers in $projectPackagePath")
+        stereotypesClasses = scanForMinecraftStereotypes(stereotypes, projectPackagePath)
+        logger.info("Found ${stereotypesClasses.size} Minecraft controllers in $projectPackagePath")
         startDI()
-        controllers = getMinecraftControllers()
-        logger.info("Found ${controllers.size} Minecraft controllers in $projectPackagePath")
-        scanForMinecraftAnnotationsInClassesOnLoad(controllers)
+        scanForMinecraftAnnotationsInClassesOnLoad(stereotypesClasses)
 
         ServerEventsHelper.triggerOnLoad(this)
     }
 
     final override fun onEnable() {
         ServerEventsHelper.triggerOnEnable(this)
-        scanForMinecraftAnnotationsInClassesOnEnable(controllers)
+        scanForMinecraftAnnotationsInClassesOnEnable(stereotypesClasses)
     }
 
     final override fun onDisable() {
@@ -70,7 +70,9 @@ abstract class DIJavaPlugin : JavaPlugin() {
     }
 
     private fun scanForMinecraftAnnotationsInClassesOnEnable(classes: List<KClass<*>>) {
-        classes.forEach { clazz ->
+        classes
+            .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
+            .forEach { clazz ->
             clazz.members.forEach { func ->
                 func.annotations.forEach { annotation ->
                     when (annotation) {
@@ -92,7 +94,9 @@ abstract class DIJavaPlugin : JavaPlugin() {
     }
 
     private fun scanForMinecraftAnnotationsInClassesOnLoad(classes: List<KClass<*>>) {
-        classes.forEach { clazz ->
+        classes
+            .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
+            .forEach { clazz ->
             clazz.members.forEach { func ->
                 func.annotations.forEach { annotation ->
                     when (annotation) {

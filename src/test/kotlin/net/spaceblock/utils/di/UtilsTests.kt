@@ -35,7 +35,7 @@ open class UtilsTests {
         val log = logger(plugin)
         log shouldNotBe null
         log shouldBe plugin.logger
-        log shouldBe plugin.getDI(Logger::class)
+        log shouldBe plugin.getDI(Logger::class, "pluginLogger")
     }
 
     @Test

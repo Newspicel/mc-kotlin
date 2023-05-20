@@ -6,7 +6,7 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.callSuspendBy
 
-fun logger(plugin: DIJavaPlugin) = plugin.getDI(Logger::class, plugin.name)!!
+fun logger(plugin: DIJavaPlugin) = plugin.getDI(Logger::class, "pluginLogger")!!
 
 fun KCallable<*>.callOrSuspendCallBy(args: Map<KParameter, Any?>): Any? {
     if (isSuspend) {

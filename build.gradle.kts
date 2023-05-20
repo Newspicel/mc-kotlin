@@ -7,7 +7,6 @@ group = "net.spaceblock.utils"
 version = properties["version"] as String
 
 val kotlinCoroutinesVersion = "1.7.1"
-val springVersion = "6.0.9"
 val koTestVersion = "5.6.2"
 val guiceVersion = "6.0.0"
 
@@ -22,8 +21,6 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
 
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-
     // KReflection
     implementation(kotlin("reflect"))
 
@@ -31,9 +28,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlinCoroutinesVersion")
 
-    // Spring
-    implementation("org.springframework:spring-context:$springVersion")
-    implementation("org.springframework:spring-beans:$springVersion")
+    // Guice
+    implementation("com.google.inject:guice:$guiceVersion")
+    implementation("org.reflections:reflections:0.10.2")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
