@@ -3,12 +3,14 @@ package net.spaceblock.utils.di.commands
 import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.DIJavaPlugin
 import net.spaceblock.utils.di.callOrSuspendCallBy
+import net.spaceblock.utils.di.logger
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.logging.Level
 import kotlin.reflect.KCallable
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.isAccessible
@@ -64,7 +66,7 @@ object CommandsHelper {
             func.callOrSuspendCallBy(params)
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command"))
-            e.printStackTrace()
+            plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
             return@CommandExecutor false
         }
 

@@ -7,10 +7,11 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.support.beans
 import java.util.logging.Logger
 import kotlin.reflect.KClass
+import kotlin.reflect.full.findAnnotations
 
 abstract class SpringJavaPlugin : DIJavaPlugin() {
 
-   private lateinit var context: AnnotationConfigApplicationContext
+    private lateinit var context: AnnotationConfigApplicationContext
 
     final override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
         return if (qualifier != null && context.containsBean(qualifier)) {
@@ -29,9 +30,8 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
 
     override fun getMinecraftControllers(): List<KClass<*>> = context.beanDefinitionNames
         .mapNotNull { context.getType(it) }
-        //.filter { it.packageName.startsWith(path) }
         .map { it.kotlin }
-        .filter { it.java.isAnnotationPresent(MinecraftController::class.java) }
+        .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
 
     final override fun getQualifier(annotation: List<Annotation>): String? {
         return annotation
@@ -42,9 +42,12 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
     }
 
     override fun initDI() {
-        logger.info("Initializing DI")
+        logger.info("Initializing Dependency Injection")
         context = AnnotationConfigApplicationContext()
+    }
 
+    final override fun startDI() {
+        logger.info("Starting Dependency Injection")
         val beans = beans {
             bean<JavaPlugin>(isPrimary = true) { this@SpringJavaPlugin }
             bean<JavaPlugin>(name = this@SpringJavaPlugin.name) { this@SpringJavaPlugin }
@@ -53,16 +56,13 @@ abstract class SpringJavaPlugin : DIJavaPlugin() {
         }
 
         beans.initialize(context)
-    }
 
-    final override fun startDI() {
-        logger.info("Starting DI")
         context.refresh()
         context.start()
     }
 
     final override fun stopDI() {
-        logger.info("Stopping DI")
+        logger.info("Stopping Dependency Injection")
         context.stop()
     }
 }
