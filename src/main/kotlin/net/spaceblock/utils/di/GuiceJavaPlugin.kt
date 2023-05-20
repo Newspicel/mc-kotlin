@@ -30,15 +30,21 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
         stereotypesClasses
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
             .forEach {
-            injector.getInstance(it.java)
-        }
+                injector.getInstance(it.java)
+            }
     }
 
     override fun stopDI() {}
 
     override fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String): List<KClass<*>> {
         val reflections = Reflections(packagePath)
-        reflections.getTypesAnnotatedWith(MinecraftController::class.java).forEach { println(it) }
+        reflections.store.forEach { (key, m) ->
+            m.forEach { (k, v) ->
+                v.forEach {
+                    println("key: $key, k: $k, v: $it")
+                }
+            }
+        }
         return annotation
             .map { reflections.getTypesAnnotatedWith(it.java) }
             .flatten()
@@ -66,7 +72,7 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 
 class MinecraftGuiceModule(
     private val plugin: GuiceJavaPlugin,
-    private val allStereotypes: List<KClass<*>>
+    private val allStereotypes: List<KClass<*>>,
 ) : AbstractModule() {
     override fun configure() {
         bind(JavaPlugin::class.java).toInstance(plugin)
