@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
-class SpringBootJavaPluginTest {
+class SpringJavaPluginTest {
 
     private lateinit var server: ServerMock
     private lateinit var plugin: TestPlugin

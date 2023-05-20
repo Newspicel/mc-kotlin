@@ -26,9 +26,11 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
     abstract val projectPackagePath: String
 
+    private lateinit var controllers: List<KClass<*>>
+
     override fun onLoad() {
         startDI()
-        val controllers = scanForMinecraftControllers()
+        controllers = scanForMinecraftControllers()
         scanForMinecraftAnnotationsInClassesOnLoad(controllers)
 
         ServerEventsHelper.triggerOnLoad(this)
@@ -36,7 +38,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
     final override fun onEnable() {
         ServerEventsHelper.triggerOnEnable(this)
-        scanForMinecraftAnnotationsInClassesOnEnable(scanForMinecraftControllers())
+        scanForMinecraftAnnotationsInClassesOnEnable(controllers)
     }
 
     final override fun onDisable() {

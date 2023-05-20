@@ -8,7 +8,7 @@ import org.springframework.context.support.beans
 import java.util.logging.Logger
 import kotlin.reflect.KClass
 
-abstract class SpringBootJavaPlugin : DIJavaPlugin() {
+abstract class SpringJavaPlugin : DIJavaPlugin() {
 
     private lateinit var context: AnnotationConfigApplicationContext
 
@@ -28,7 +28,7 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
 
         val classes = context.beanDefinitionNames
             .mapNotNull { context.getType(it) }
-            .filter { it.packageName.startsWith(path) }
+            //.filter { it.packageName.startsWith(path) }
             .map { it.kotlin }
             .filter { it.java.isAnnotationPresent(MinecraftController::class.java) }
 
@@ -50,10 +50,10 @@ abstract class SpringBootJavaPlugin : DIJavaPlugin() {
         context = AnnotationConfigApplicationContext()
 
         val beans = beans {
-            bean<JavaPlugin>(isPrimary = true) { this@SpringBootJavaPlugin }
-            bean<JavaPlugin>(name = this@SpringBootJavaPlugin.name) { this@SpringBootJavaPlugin }
-            bean<Logger>(isPrimary = true, name = this@SpringBootJavaPlugin.name) { this@SpringBootJavaPlugin.logger }
-            bean<Server> { this@SpringBootJavaPlugin.server }
+            bean<JavaPlugin>(isPrimary = true) { this@SpringJavaPlugin }
+            bean<JavaPlugin>(name = this@SpringJavaPlugin.name) { this@SpringJavaPlugin }
+            bean<Logger>(isPrimary = true, name = this@SpringJavaPlugin.name) { this@SpringJavaPlugin.logger }
+            bean<Server> { this@SpringJavaPlugin.server }
         }
 
         beans.initialize(context)
