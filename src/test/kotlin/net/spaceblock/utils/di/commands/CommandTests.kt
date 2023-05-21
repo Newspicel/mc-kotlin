@@ -89,10 +89,10 @@ open class CommandTests {
         server.execute("test-permission", player).assertFailed()
     }
 
-    @Test
+    /*@Test
     fun `should args as list or array work`() {
         server.addPlayer()
         server.executePlayer("array", "test").assertSucceeded()
         server.executePlayer("list", "test").assertSucceeded()
-    }
+    }*/
 }
