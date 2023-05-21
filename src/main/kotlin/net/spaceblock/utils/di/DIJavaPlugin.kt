@@ -66,8 +66,6 @@ abstract class DIJavaPlugin : JavaPlugin() {
             error("Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
         }
 
-        println("Parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier has value $value")
-
         value
     }
 

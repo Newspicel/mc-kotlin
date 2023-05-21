@@ -1,6 +1,7 @@
 package net.spaceblock.utils.di.commands
 
 import kotlinx.coroutines.runBlocking
+import net.kyori.adventure.text.format.TextColor
 import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.coroutine.asyncDispatcher
 import net.spaceblock.utils.coroutine.launch
@@ -49,7 +50,7 @@ object CommandsHelper {
         if (command.label != label) error("This should never happen")
 
         if (!checkPermissions(sender, func)) {
-            sender.sendMessage(text("You don't have permission to execute this command"))
+            sender.sendMessage(text("You don't have permission to execute this command").color(TextColor.color(0xFF0000)))
             return@CommandExecutor false
         }
 
@@ -68,20 +69,15 @@ object CommandsHelper {
 
         try {
             plugin.launch(plugin.asyncDispatcher) {
-                try {
-                    func.callSuspendBy(params)
-                } catch (e: Exception) {
-                    sender.sendMessage(text("An error occurred while executing this command"))
-                    plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
-                }
+                func.callSuspendBy(params)
+                return@launch
             }
+            return@CommandExecutor true
         } catch (e: Exception) {
-            sender.sendMessage(text("An error occurred while executing this command"))
+            sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))
             plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
             return@CommandExecutor false
         }
-
-        return@CommandExecutor true
     }
 
     private fun createTabCompleter(plugin: DIJavaPlugin, func: KCallable<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
