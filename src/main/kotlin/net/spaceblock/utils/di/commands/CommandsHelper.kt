@@ -68,12 +68,10 @@ object CommandsHelper {
 
         try {
             plugin.launch(plugin.asyncDispatcher) {
+                func.parameters.joinToString(", ") { it.name ?: "null" }.let { plugin.logger.info("Executing command $label with parameters: $it") }
+                params.forEach { (key, value) -> plugin.logger.info("Parameter $key: $value") }
+
                 func.callSuspendBy(params)
-            }.invokeOnCompletion {
-                if (it != null) {
-                    sender.sendMessage(text("An error occurred while executing this command"))
-                    plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", it)
-                }
             }
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command"))
