@@ -29,7 +29,7 @@ open class UtilsTests {
 
     @Test
     fun `should get logger`() {
-        val log = logger(plugin)
+        val log = logger(plugin).value
         log shouldNotBe null
         log shouldBe plugin.logger
         log shouldBe plugin.getDI(Logger::class, "pluginLogger")
