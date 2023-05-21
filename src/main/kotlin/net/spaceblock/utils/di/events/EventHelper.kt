@@ -1,11 +1,14 @@
 package net.spaceblock.utils.di.events
 
+import kotlinx.coroutines.runBlocking
+import net.spaceblock.utils.coroutine.asyncDispatcher
+import net.spaceblock.utils.coroutine.launch
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.event.EventException
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import kotlin.reflect.KCallable
+import kotlin.reflect.full.callSuspendBy
 
 object EventHelper {
 
@@ -29,7 +32,17 @@ object EventHelper {
         val params = plugin.getParameterMap(func.parameters, event)
 
         try {
-            func.callOrSuspendCallBy(params)
+            val isEventCancellable = event is org.bukkit.event.Cancellable
+
+            if (isEventCancellable) {
+                runBlocking {
+                    func.callSuspendBy(params)
+                }
+            } else {
+                plugin.launch(plugin.asyncDispatcher) {
+                    func.callSuspendBy(params)
+                }
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             throw EventException(e)

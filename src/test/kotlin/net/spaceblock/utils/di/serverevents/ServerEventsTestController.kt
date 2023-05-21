@@ -1,6 +1,7 @@
 package net.spaceblock.utils.di.serverevents
 
 import net.spaceblock.utils.di.MinecraftController
+import org.bukkit.plugin.java.JavaPlugin
 
 @MinecraftController
 class ServerEventsTestController {
@@ -10,8 +11,14 @@ class ServerEventsTestController {
     var onLoad = false
 
     @OnEnable
-    fun onEnable() {
+    fun onEnable(plugin: JavaPlugin) {
         onEnable = true
+        plugin.server.scheduler.runTaskAsynchronously(
+            plugin,
+            Runnable {
+                println("Hello from onEnable!")
+            },
+        )
     }
 
     @OnDisable

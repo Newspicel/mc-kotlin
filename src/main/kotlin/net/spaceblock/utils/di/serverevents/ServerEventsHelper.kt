@@ -1,8 +1,9 @@
 package net.spaceblock.utils.di.serverevents
 
+import kotlinx.coroutines.runBlocking
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.callOrSuspendCallBy
 import kotlin.reflect.KCallable
+import kotlin.reflect.full.callSuspendBy
 
 object ServerEventsHelper {
 
@@ -27,21 +28,27 @@ object ServerEventsHelper {
     fun triggerOnEnable(plugin: DIJavaPlugin) {
         onEnable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            function.callOrSuspendCallBy(params)
+            runBlocking {
+                function.callSuspendBy(params)
+            }
         }
     }
 
     fun triggerOnDisable(plugin: DIJavaPlugin) {
         onDisable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            function.callOrSuspendCallBy(params)
+            runBlocking {
+                function.callSuspendBy(params)
+            }
         }
     }
 
     fun triggerOnLoad(plugin: DIJavaPlugin) {
         onLoad.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            function.callOrSuspendCallBy(params)
+            runBlocking {
+                function.callSuspendBy(params)
+            }
         }
     }
 }

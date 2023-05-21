@@ -35,22 +35,22 @@ class CommandTestController() {
     @HasPermission("test")
     suspend fun permission() {
         println("test-permission")
-    }
-
-    @Command("test3", playerOnly = true)
-    fun test3(): Boolean {
-        return false
-    }
-
-    @Command("test4", playerOnly = true)
-    suspend fun test4(): Boolean {
         delay(1)
-        return false
     }
 
     @Command("error")
-    suspend fun error(): Boolean {
+    suspend fun error() {
         delay(1)
         throw Exception("test")
+    }
+
+    @Command("list")
+    fun list(args: List<String>) {
+        println(args)
+    }
+
+    @Command("array")
+    fun array(array: Array<String>) {
+        println(array)
     }
 }

@@ -73,48 +73,48 @@ abstract class DIJavaPlugin : JavaPlugin() {
         classes
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
             .forEach { clazz ->
-            clazz.members.forEach { func ->
-                func.annotations.forEach { annotation ->
-                    when (annotation) {
-                        is Command -> {
-                            CommandsHelper.registerCommand(this, annotation, func)
-                        }
+                clazz.members.forEach { func ->
+                    func.annotations.forEach { annotation ->
+                        when (annotation) {
+                            is Command -> {
+                                CommandsHelper.registerCommand(this, annotation, func)
+                            }
 
-                        is TabComplete -> {
-                            CommandsHelper.registerTabComplete(this, annotation, func)
-                        }
+                            is TabComplete -> {
+                                CommandsHelper.registerTabComplete(this, annotation, func)
+                            }
 
-                        is Event -> {
-                            EventHelper.registerEvent(this, annotation, func)
+                            is Event -> {
+                                EventHelper.registerEvent(this, annotation, func)
+                            }
                         }
                     }
                 }
             }
-        }
     }
 
     private fun scanForMinecraftAnnotationsInClassesOnLoad(classes: List<KClass<*>>) {
         classes
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
             .forEach { clazz ->
-            clazz.members.forEach { func ->
-                func.annotations.forEach { annotation ->
-                    when (annotation) {
-                        is OnEnable -> {
-                            ServerEventsHelper.registerOnEnable(func)
-                        }
+                clazz.members.forEach { func ->
+                    func.annotations.forEach { annotation ->
+                        when (annotation) {
+                            is OnEnable -> {
+                                ServerEventsHelper.registerOnEnable(func)
+                            }
 
-                        is OnDisable -> {
-                            ServerEventsHelper.registerOnDisable(func)
-                        }
+                            is OnDisable -> {
+                                ServerEventsHelper.registerOnDisable(func)
+                            }
 
-                        is OnLoad -> {
-                            ServerEventsHelper.registerOnLoad(func)
+                            is OnLoad -> {
+                                ServerEventsHelper.registerOnLoad(func)
+                            }
                         }
                     }
                 }
             }
-        }
     }
 
     // Lock this stuff down

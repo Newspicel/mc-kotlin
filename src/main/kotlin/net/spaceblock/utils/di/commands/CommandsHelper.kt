@@ -1,9 +1,10 @@
 package net.spaceblock.utils.di.commands
 
+import kotlinx.coroutines.runBlocking
 import net.spaceblock.utils.adventure.text
+import net.spaceblock.utils.coroutine.asyncDispatcher
+import net.spaceblock.utils.coroutine.launch
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.callOrSuspendCallBy
-import net.spaceblock.utils.di.logger
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Level
 import kotlin.reflect.KCallable
+import kotlin.reflect.full.callSuspendBy
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.isAccessible
 
@@ -60,18 +62,23 @@ object CommandsHelper {
             null
         }
 
-        val params = plugin.getParameterMap(func.parameters, player, sender, label, args)
+        val listArgs = args.toList()
 
-        val result = try {
-            func.callOrSuspendCallBy(params)
+        val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
+
+        try {
+            plugin.launch(plugin.asyncDispatcher) {
+                func.callSuspendBy(params)
+            }.invokeOnCompletion {
+                if (it != null) {
+                    sender.sendMessage(text("An error occurred while executing this command"))
+                    plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", it)
+                }
+            }
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command"))
             plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
             return@CommandExecutor false
-        }
-
-        if (result is Boolean) {
-            return@CommandExecutor result
         }
 
         return@CommandExecutor true
@@ -87,20 +94,30 @@ object CommandsHelper {
         val params = plugin.getParameterMap(func.parameters, sender, label, args)
 
         val result = try {
-            func.callOrSuspendCallBy(params)
+            runBlocking {
+                func.callSuspendBy(params)
+            }
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command"))
             e.printStackTrace()
             return@TabCompleter emptyList()
         }
 
-        if (result is List<*>) {
-            if (result.isEmpty()) return@TabCompleter emptyList()
+        when (result) {
+            is List<*> -> {
+                if (result.isEmpty()) return@TabCompleter emptyList()
+                return@TabCompleter result.map { it.toString() }
+            }
 
-            return@TabCompleter result.map { it.toString() }
+            is Array<*> -> {
+                if (result.isEmpty()) return@TabCompleter emptyList()
+                return@TabCompleter result.map { it.toString() }
+            }
+
+            else -> {
+                throw IllegalStateException("TabCompleter function must return a List<String> or Array<String>")
+            }
         }
-
-        return@TabCompleter emptyList()
     }
 
     @Suppress("RedundantIf")

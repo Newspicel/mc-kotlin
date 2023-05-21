@@ -2,7 +2,6 @@ package net.spaceblock.utils.di
 
 import be.seeseemelk.mockbukkit.MockBukkit
 import be.seeseemelk.mockbukkit.ServerMock
-import com.google.inject.name.Named
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import net.spaceblock.utils.di.commands.CommandTestController
@@ -48,7 +47,7 @@ class SpringJavaPluginTest {
 
     @Test
     fun scanForMinecraftControllers() {
-        plugin.scanForMinecraftStereotypes(arrayOf(MinecraftController::class),"net.spaceblock.utils.di.commands").size shouldBe 1
+        plugin.scanForMinecraftStereotypes(arrayOf(MinecraftController::class), "net.spaceblock.utils.di.commands").size shouldBe 1
         plugin.scanForMinecraftStereotypes(arrayOf(MinecraftController::class), "net.spaceblock.utils.di.not.exist") shouldBe emptyList()
     }
 }

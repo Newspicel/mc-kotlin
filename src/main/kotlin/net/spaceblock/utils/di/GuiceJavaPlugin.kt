@@ -7,7 +7,6 @@ import com.google.inject.Key
 import com.google.inject.Singleton
 import com.google.inject.name.Named
 import com.google.inject.name.Names
-import com.google.inject.util.Modules
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections

@@ -62,21 +62,12 @@ open class CommandTests {
         server.addPlayer()
         server.executePlayer("test").assertSucceeded()
         server.executePlayer("test2").assertSucceeded()
-        server.executePlayer("test3").assertFailed()
-        server.executePlayer("test4").assertFailed()
     }
 
     @Test
     fun `check if is player`() {
         server.executeConsole("test").assertFailed()
         server.addPlayer()
-        server.executePlayer("test").assertSucceeded()
-    }
-
-    @Test
-    fun `check if error handling works`() {
-        server.addPlayer()
-        server.executePlayer("error").assertFailed()
         server.executePlayer("test").assertSucceeded()
     }
 
@@ -96,5 +87,12 @@ open class CommandTests {
         player.addAttachment(plugin, "test", false)
         server.execute("test-op", player).assertFailed()
         server.execute("test-permission", player).assertFailed()
+    }
+
+    @Test
+    fun `should args as list or array work`() {
+        server.addPlayer()
+        server.executePlayer("array", "test").assertSucceeded()
+        server.executePlayer("list", "test").assertSucceeded()
     }
 }
