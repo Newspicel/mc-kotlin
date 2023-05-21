@@ -7,6 +7,7 @@ import net.spaceblock.utils.di.DIJavaPlugin
 import org.bukkit.event.EventException
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
+import java.util.logging.Level
 import kotlin.reflect.KCallable
 import kotlin.reflect.full.callSuspendBy
 
@@ -40,11 +41,15 @@ object EventHelper {
                 }
             } else {
                 plugin.launch(plugin.asyncDispatcher) {
-                    func.callSuspendBy(params)
+                    try {
+                        func.callSuspendBy(params)
+                    } catch (e: Exception) {
+                        plugin.logger.log(Level.SEVERE, "Failed to execute event ${eventAnnotation.event.simpleName}", e)
+                    }
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            plugin.logger.log(Level.SEVERE, "Failed to execute event ${eventAnnotation.event.simpleName}", e)
             throw EventException(e)
         }
     }

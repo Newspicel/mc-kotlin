@@ -29,7 +29,11 @@ object ServerEventsHelper {
         onEnable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
             runBlocking {
-                function.callSuspendBy(params)
+                try {
+                    function.callSuspendBy(params)
+                } catch (e: Exception) {
+                    plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onEnable", e)
+                }
             }
         }
     }
@@ -38,7 +42,11 @@ object ServerEventsHelper {
         onDisable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
             runBlocking {
-                function.callSuspendBy(params)
+                try {
+                    function.callSuspendBy(params)
+                } catch (e: Exception) {
+                    plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onDisable", e)
+                }
             }
         }
     }
@@ -47,7 +55,11 @@ object ServerEventsHelper {
         onLoad.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
             runBlocking {
-                function.callSuspendBy(params)
+                try {
+                    function.callSuspendBy(params)
+                } catch (e: Exception) {
+                    plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onLoad", e)
+                }
             }
         }
     }
