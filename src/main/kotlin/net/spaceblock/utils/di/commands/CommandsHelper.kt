@@ -6,6 +6,7 @@ import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.coroutine.asyncDispatcher
 import net.spaceblock.utils.coroutine.launch
 import net.spaceblock.utils.di.DIJavaPlugin
+import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
@@ -68,10 +69,7 @@ object CommandsHelper {
         val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
 
         try {
-            plugin.launch(plugin.asyncDispatcher) {
-                func.callSuspendBy(params)
-                return@launch
-            }
+            func.callOrSuspendCallBy(plugin, params, dispatcher = plugin.asyncDispatcher)
             return@CommandExecutor true
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))

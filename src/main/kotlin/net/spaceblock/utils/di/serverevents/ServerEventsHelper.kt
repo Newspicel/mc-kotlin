@@ -28,12 +28,12 @@ object ServerEventsHelper {
     fun triggerOnEnable(plugin: DIJavaPlugin) {
         onEnable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            runBlocking {
-                try {
+            try {
+                runBlocking {
                     function.callSuspendBy(params)
-                } catch (e: Exception) {
-                    plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onEnable", e)
                 }
+            } catch (e: Exception) {
+                plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onEnable", e)
             }
         }
     }
@@ -41,12 +41,12 @@ object ServerEventsHelper {
     fun triggerOnDisable(plugin: DIJavaPlugin) {
         onDisable.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            runBlocking {
-                try {
+            try {
+                runBlocking {
                     function.callSuspendBy(params)
-                } catch (e: Exception) {
-                    plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onDisable", e)
                 }
+            } catch (e: Exception) {
+                plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onDisable", e)
             }
         }
     }
@@ -54,12 +54,12 @@ object ServerEventsHelper {
     fun triggerOnLoad(plugin: DIJavaPlugin) {
         onLoad.forEach { function ->
             val params = plugin.getParameterMap(function.parameters)
-            runBlocking {
-                try {
+            try {
+                runBlocking {
                     function.callSuspendBy(params)
-                } catch (e: Exception) {
-                    plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onLoad", e)
                 }
+            } catch (e: Exception) {
+                plugin.logger.log(java.util.logging.Level.SEVERE, "Failed to execute onLoad", e)
             }
         }
     }
