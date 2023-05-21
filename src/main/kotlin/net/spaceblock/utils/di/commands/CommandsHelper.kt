@@ -64,13 +64,10 @@ object CommandsHelper {
 
         val listArgs = args.toList()
 
-        val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
+        val params = plugin.getParameterMap(func.parameters, player, sender, label, args)
 
         try {
             plugin.launch(plugin.asyncDispatcher) {
-                func.parameters.joinToString(", ") { it.name ?: "null" }.let { plugin.logger.info("Executing command $label with parameters: $it") }
-                params.forEach { (key, value) -> plugin.logger.info("Parameter $key: $value") }
-
                 try {
                     func.callSuspendBy(params)
                 } catch (e: Exception) {
