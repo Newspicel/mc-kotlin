@@ -67,7 +67,7 @@ object CommandsHelper {
         val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
 
         try {
-            runBlocking /*plugin.launch(plugin.asyncDispatcher)*/ {
+            plugin.launch(plugin.asyncDispatcher) {
                 try {
                     func.callSuspendBy(params)
                 } catch (e: Exception) {
