@@ -12,6 +12,8 @@ import net.spaceblock.utils.di.serverevents.OnLoad
 import net.spaceblock.utils.di.serverevents.ServerEventsHelper
 import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
+import org.reflections.Reflections
+import org.reflections.util.ConfigurationBuilder
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotations
@@ -21,38 +23,46 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
     private val stereotypes = arrayOf(MinecraftController::class, Service::class, Repository::class)
 
-    abstract fun initDI()
-    abstract fun startDI()
-    abstract fun stopDI()
-
-    abstract fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String = projectPackagePath): List<KClass<*>>
-    abstract fun <T : Any> getDI(type: KClass<T>, qualifier: String? = null): T?
-    abstract fun getQualifier(annotation: List<Annotation>): String?
+    protected lateinit var stereotypesClasses: List<KClass<*>>
+    private lateinit var controllerClasses: List<KClass<*>>
 
     abstract val projectPackagePath: String
 
-    protected lateinit var stereotypesClasses: List<KClass<*>>
+    abstract fun startDI()
+    abstract fun <T : Any> getDI(type: KClass<T>, qualifier: String? = null): T?
+    abstract fun getQualifier(annotation: List<Annotation>): String?
+
 
     override fun onLoad() {
-        initDI()
         logger.info("Scanning for Minecraft controllers in $projectPackagePath")
-        stereotypesClasses = scanForMinecraftStereotypes(stereotypes, projectPackagePath)
+        stereotypesClasses = scanForMinecraftStereotypes()
+        controllerClasses = stereotypesClasses.filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
         logger.info("Found ${stereotypesClasses.size} Minecraft Stereotypes in $projectPackagePath")
         startDI()
-        scanForMinecraftAnnotationsInClassesOnLoad(stereotypesClasses)
+        scanForMinecraftAnnotationsInClassesOnLoad()
 
         ServerEventsHelper.triggerOnLoad(this)
     }
 
     final override fun onEnable() {
         ServerEventsHelper.triggerOnEnable(this)
-        scanForMinecraftAnnotationsInClassesOnEnable(stereotypesClasses)
+        scanForMinecraftAnnotationsInClassesOnEnable()
     }
 
     final override fun onDisable() {
         ServerEventsHelper.triggerOnDisable(this)
+    }
 
-        stopDI()
+    private fun scanForMinecraftStereotypes(): List<KClass<*>> {
+        val cfg = ConfigurationBuilder()
+            .addClassLoaders(this.classLoader)
+            .forPackage(projectPackagePath, this.classLoader)
+
+        val reflections = Reflections(cfg)
+        return stereotypes
+            .map { reflections.getTypesAnnotatedWith(it.objectInstance) }
+            .flatten()
+            .map { it.kotlin }
     }
 
     fun getParameterMap(parameters: List<KParameter>, vararg additional: Any?): Map<KParameter, Any?> = parameters.associateWith { parameter ->
@@ -74,10 +84,8 @@ abstract class DIJavaPlugin : JavaPlugin() {
         value
     }
 
-    private fun scanForMinecraftAnnotationsInClassesOnEnable(classes: List<KClass<*>>) {
-        classes
-            .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
-            .forEach { clazz ->
+    private fun scanForMinecraftAnnotationsInClassesOnEnable() {
+        controllerClasses.forEach { clazz ->
                 clazz.functions.forEach { func ->
                     func.annotations.forEach { annotation ->
                         when (annotation) {
@@ -98,10 +106,8 @@ abstract class DIJavaPlugin : JavaPlugin() {
             }
     }
 
-    private fun scanForMinecraftAnnotationsInClassesOnLoad(classes: List<KClass<*>>) {
-        classes
-            .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
-            .forEach { clazz ->
+    private fun scanForMinecraftAnnotationsInClassesOnLoad() {
+        controllerClasses.forEach { clazz ->
                 clazz.functions.forEach { func ->
                     func.annotations.forEach { annotation ->
                         when (annotation) {

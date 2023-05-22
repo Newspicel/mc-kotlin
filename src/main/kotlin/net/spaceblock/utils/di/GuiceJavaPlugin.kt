@@ -21,40 +21,17 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 
     private lateinit var injector: Injector
 
-    override fun initDI() {
-    }
-
     override fun startDI() {
+        logger.info("Starting Guice injector")
         val module = MinecraftGuiceModule(this, stereotypesClasses, classLoader)
 
-        try {
-            injector = Guice.createInjector(module)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        injector = Guice.createInjector(module) ?: error("Could not create Guice injector")
 
         stereotypesClasses
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
             .forEach {
                 injector.getInstance(it.java)
             }
-    }
-
-    override fun stopDI() {}
-
-    override fun scanForMinecraftStereotypes(annotation: Array<KClass<out Annotation>>, packagePath: String): List<KClass<*>> {
-
-        val cfg = ConfigurationBuilder()
-            .setUrls(ClasspathHelper.forClassLoader(this.classLoader))
-            .setClassLoaders(arrayOf(this.classLoader))
-            .setScanners(Scanners.TypesAnnotated)
-
-        val reflections = Reflections(cfg)
-        return annotation
-            .map { reflections.getTypesAnnotatedWith(it.java) }
-            .flatten()
-            .map { it.kotlin }
-            .map { this.classLoader.loadClass(it.qualifiedName).kotlin }
     }
 
     override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
