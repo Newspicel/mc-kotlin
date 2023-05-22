@@ -1,7 +1,9 @@
 package net.spaceblock.utils.di.commands
 
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextColor
@@ -21,7 +23,9 @@ import kotlin.reflect.jvm.isAccessible
 
 object CommandsHelper {
 
-    private val commandScope = CoroutineScope(Dispatchers.Default)
+    private val commandScope = CoroutineScope(Dispatchers.Default + CoroutineExceptionHandler { _, throwable ->
+        throwable.printStackTrace()
+    })
 
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KCallable<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)

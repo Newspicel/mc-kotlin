@@ -1,5 +1,6 @@
 package net.spaceblock.utils.di.events
 
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +15,9 @@ import kotlin.reflect.full.callSuspendBy
 
 object EventHelper {
 
-    private val eventScope = CoroutineScope(Dispatchers.Default)
+    private val eventScope = CoroutineScope(Dispatchers.Default + CoroutineExceptionHandler { _, throwable ->
+        throwable.printStackTrace()
+    })
 
     private val emptyListener = object : Listener {}
 

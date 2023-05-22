@@ -3,6 +3,8 @@ package net.spaceblock.utils.di.commands
 import be.seeseemelk.mockbukkit.MockBukkit
 import be.seeseemelk.mockbukkit.ServerMock
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import net.spaceblock.utils.di.TestPlugin
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -46,7 +48,7 @@ open class CommandTests {
     }
 
     @Test
-    fun `check command is run`() {
+    fun `check command is run`(): Unit = runBlocking {
         val ctc = plugin.getDI(CommandTestController::class)
         ctc?.i = 0
         server.addPlayer()
@@ -54,6 +56,7 @@ open class CommandTests {
             server.executePlayer("test").assertSucceeded()
             server.executePlayer("test2").assertSucceeded()
         }
+        delay(1000)
         ctc?.i shouldBe 20
     }
 
