@@ -22,6 +22,7 @@ class CommandTestController() {
     @Command("test2", playerOnly = true)
     suspend fun test2() {
         println("test2")
+        delay(1)
         i++
     }
 
@@ -29,6 +30,7 @@ class CommandTestController() {
     @IsOp
     suspend fun op() {
         println("test-op")
+        delay(1)
     }
 
     @Command("test-permission", playerOnly = true)

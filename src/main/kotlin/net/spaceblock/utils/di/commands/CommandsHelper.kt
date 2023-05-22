@@ -23,9 +23,7 @@ import kotlin.reflect.jvm.isAccessible
 
 object CommandsHelper {
 
-    private val commandScope = CoroutineScope(Dispatchers.Default + CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
-    })
+    private val commandScope = CoroutineScope(Dispatchers.Default)
 
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KCallable<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
@@ -77,7 +75,12 @@ object CommandsHelper {
 
         try {
             commandScope.launch {
-                func.callSuspendBy(params)
+                try {
+                    func.callSuspendBy(params)
+                } catch (e: Exception) {
+                    sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))
+                    plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
+                }
             }
             return@CommandExecutor true
         } catch (e: Exception) {

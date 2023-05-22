@@ -1,6 +1,5 @@
 package net.spaceblock.utils.di.events
 
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,9 +14,7 @@ import kotlin.reflect.full.callSuspendBy
 
 object EventHelper {
 
-    private val eventScope = CoroutineScope(Dispatchers.Default + CoroutineExceptionHandler { _, throwable ->
-        throwable.printStackTrace()
-    })
+    private val eventScope = CoroutineScope(Dispatchers.Default)
 
     private val emptyListener = object : Listener {}
 
@@ -47,7 +44,11 @@ object EventHelper {
                 }
             } else {
                 eventScope.launch {
-                    func.callSuspendBy(params)
+                    try {
+                        func.callSuspendBy(params)
+                    } catch (e: Exception) {
+                        plugin.logger.log(Level.SEVERE, "Failed to execute event ${eventAnnotation.event.simpleName}", e)
+                    }
                 }
             }
         } catch (e: Exception) {
