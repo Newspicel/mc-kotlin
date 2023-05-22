@@ -14,7 +14,6 @@ private fun generateRepeatTask(repeat: Long, delay: Long, register: (Long) -> Bu
     }
 }
 
-
 fun runTask(plugin: JavaPlugin, block: () -> Unit) = plugin.server.scheduler.runTask(plugin, block)
 
 fun runSuspendTask(plugin: JavaPlugin, block: suspend () -> Unit) = plugin.launch { block() }
@@ -39,10 +38,10 @@ fun runTaskTimerAsynchronously(plugin: JavaPlugin, delay: Long, period: Long, bl
 
 fun runSuspendTaskTimerAsynchronously(plugin: JavaPlugin, delay: Long, period: Long, block: suspend () -> Unit) = plugin.server.scheduler.runTaskTimerAsynchronously(plugin, suspendToAsynchronouslyRunnable(plugin, block), delay - 1L, period)
 
-//fun runTaskRepeat(plugin: JavaPlugin, repeat: Long, delay: Long, block: () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLater(plugin, block, d) }
+// fun runTaskRepeat(plugin: JavaPlugin, repeat: Long, delay: Long, block: () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLater(plugin, block, d) }
 
-//fun runSuspendTaskRepeat(plugin: JavaPlugin, repeat: Long, delay: Long, block: suspend () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLater(plugin, suspendToRunnable(plugin, block), d) }
+// fun runSuspendTaskRepeat(plugin: JavaPlugin, repeat: Long, delay: Long, block: suspend () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLater(plugin, suspendToRunnable(plugin, block), d) }
 
-//fun runTaskRepeatAsynchronously(plugin: JavaPlugin, repeat: Long, delay: Long, block: () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLaterAsynchronously(plugin, block, d) }
+// fun runTaskRepeatAsynchronously(plugin: JavaPlugin, repeat: Long, delay: Long, block: () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLaterAsynchronously(plugin, block, d) }
 
-//fun runSuspendTaskRepeatAsynchronously(plugin: JavaPlugin, repeat: Long, delay: Long, block: suspend () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLaterAsynchronously(plugin, suspendToAsynchronouslyRunnable(plugin, block), d) }
+// fun runSuspendTaskRepeatAsynchronously(plugin: JavaPlugin, repeat: Long, delay: Long, block: suspend () -> Unit) = generateRepeatTask(repeat, delay) { d -> plugin.server.scheduler.runTaskLaterAsynchronously(plugin, suspendToAsynchronouslyRunnable(plugin, block), d) }

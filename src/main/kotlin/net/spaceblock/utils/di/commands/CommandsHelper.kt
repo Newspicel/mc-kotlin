@@ -1,12 +1,10 @@
 package net.spaceblock.utils.di.commands
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextColor
 import net.spaceblock.utils.adventure.text
-import net.spaceblock.utils.coroutine.asyncDispatcher
-import net.spaceblock.utils.coroutine.launch
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
@@ -68,14 +66,20 @@ object CommandsHelper {
 
         val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
 
-        try {
-            func.callOrSuspendCallBy(plugin, params, dispatcher = plugin.asyncDispatcher)
-            return@CommandExecutor true
+        val result = try {
+            runBlocking(Dispatchers.Default) {
+                return@runBlocking func.callSuspendBy(params)
+            }
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))
             plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
-            return@CommandExecutor false
         }
+
+        if (result is Boolean) {
+            return@CommandExecutor result
+        }
+
+        return@CommandExecutor true
     }
 
     private fun createTabCompleter(plugin: DIJavaPlugin, func: KCallable<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
@@ -88,7 +92,7 @@ object CommandsHelper {
         val params = plugin.getParameterMap(func.parameters, sender, label, args)
 
         val result = try {
-            runBlocking {
+            runBlocking(Dispatchers.Default) {
                 func.callSuspendBy(params)
             }
         } catch (e: Exception) {

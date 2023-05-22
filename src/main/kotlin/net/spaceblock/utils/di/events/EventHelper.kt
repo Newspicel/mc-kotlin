@@ -1,10 +1,8 @@
 package net.spaceblock.utils.di.events
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
-import net.spaceblock.utils.coroutine.asyncDispatcher
-import net.spaceblock.utils.coroutine.launch
 import net.spaceblock.utils.di.DIJavaPlugin
-import net.spaceblock.utils.di.callOrSuspendCallBy
 import org.bukkit.event.EventException
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
@@ -42,7 +40,9 @@ object EventHelper {
                 }
             } else {
                 try {
-                    func.callOrSuspendCallBy(plugin, params, dispatcher = plugin.asyncDispatcher)
+                    runBlocking(Dispatchers.Default) {
+                        return@runBlocking func.callSuspendBy(params)
+                    }
                 } catch (e: Exception) {
                     plugin.logger.log(Level.SEVERE, "Failed to execute event ${eventAnnotation.event.simpleName}", e)
                 }

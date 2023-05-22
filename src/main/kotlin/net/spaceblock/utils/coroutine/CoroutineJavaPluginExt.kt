@@ -27,3 +27,7 @@ val JavaPlugin.asyncDispatcher: CoroutineDispatcher by pluginLazy { MinecraftAsy
 val JavaPlugin.syncDispatcher: CoroutineDispatcher by pluginLazy { MinecraftCoroutineDispatcher(this) }
 
 val JavaPlugin.coroutineScope: CoroutineScope by pluginLazy { CoroutineScopeJavaPluginHelper.createScope(this, this.syncDispatcher) }
+
+fun JavaPlugin.fireAndForget(fn: suspend () -> Unit) {
+    coroutineScope.launch { fn() }
+}
