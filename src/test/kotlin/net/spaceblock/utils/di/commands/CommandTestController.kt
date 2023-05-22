@@ -1,7 +1,9 @@
 package net.spaceblock.utils.di.commands
 
 import kotlinx.coroutines.delay
+import net.spaceblock.utils.adventure.text
 import net.spaceblock.utils.di.MinecraftController
+import org.bukkit.entity.Player
 
 @MinecraftController
 class CommandTestController() {
@@ -28,7 +30,8 @@ class CommandTestController() {
 
     @Command("test-op", playerOnly = true)
     @IsOp
-    suspend fun op() {
+    suspend fun op(player: Player) {
+        player.sendMessage(text("test-op"))
         println("test-op")
         delay(1)
     }

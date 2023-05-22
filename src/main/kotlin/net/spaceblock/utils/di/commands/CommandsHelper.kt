@@ -17,8 +17,10 @@ import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Level
 import kotlin.reflect.KCallable
+import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.callSuspendBy
 import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
 
 object CommandsHelper {
@@ -69,17 +71,25 @@ object CommandsHelper {
             null
         }
 
-        val listArgs = args.toList()
+        //val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList())
+        val params = plugin.getParameters(func.parameters, player, sender, label, args, args.toList()).toTypedArray()
 
-        val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
+        func.parameters.forEach { param ->
+            println("Parameter: ${param.name} - ${param.type}")
+        }
+
+        params.forEach { param ->
+            println(param)
+        }
 
         try {
             commandScope.launch {
                 try {
-                    func.callSuspendBy(params)
+                    func.callSuspend(*params)
                 } catch (e: Exception) {
                     sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))
                     plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
+                    e.printStackTrace()
                 }
             }
             return@CommandExecutor true
