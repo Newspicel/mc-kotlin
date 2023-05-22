@@ -1,6 +1,8 @@
 package net.spaceblock.utils.di.commands
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextColor
 import net.spaceblock.utils.adventure.text
@@ -18,6 +20,9 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.isAccessible
 
 object CommandsHelper {
+
+    private val commandScope = CoroutineScope(Dispatchers.Default)
+
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KCallable<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
         pluginCommand.aliases = command.aliases.toList()
@@ -66,20 +71,16 @@ object CommandsHelper {
 
         val params = plugin.getParameterMap(func.parameters, player, sender, label, args, listArgs)
 
-        val result = try {
-            runBlocking(Dispatchers.Default) {
-                return@runBlocking func.callSuspendBy(params)
+        try {
+            commandScope.launch {
+                func.callSuspendBy(params)
             }
+            return@CommandExecutor true
         } catch (e: Exception) {
             sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))
             plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
+            return@CommandExecutor false
         }
-
-        if (result is Boolean) {
-            return@CommandExecutor result
-        }
-
-        return@CommandExecutor true
     }
 
     private fun createTabCompleter(plugin: DIJavaPlugin, func: KCallable<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
