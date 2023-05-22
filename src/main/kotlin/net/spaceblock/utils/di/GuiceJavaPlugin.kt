@@ -41,7 +41,7 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
             Key.get(type.java, Names.named(qualifier))
         }
 
-        return injector.getExistingBinding(key).source?.let {
+        return injector.getExistingBinding(key)?.source?.let {
             injector.getInstance(key)
         }
     }
