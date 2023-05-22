@@ -25,9 +25,15 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
     }
 
     override fun startDI() {
-        val module = MinecraftGuiceModule(this, stereotypesClasses)
+        val module = MinecraftGuiceModule(this, stereotypesClasses, classLoader)
 
-        injector = Guice.createInjector(module)
+        val old = Thread.currentThread().contextClassLoader
+        try {
+            Thread.currentThread().contextClassLoader = classLoader
+            injector = Guice.createInjector(module)
+        } finally {
+            Thread.currentThread().contextClassLoader = old
+        }
 
         stereotypesClasses
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
@@ -73,11 +79,13 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 class MinecraftGuiceModule(
     private val plugin: GuiceJavaPlugin,
     private val allStereotypes: List<KClass<*>>,
+    private val classLoader: ClassLoader
 ) : AbstractModule() {
     override fun configure() {
         bind(JavaPlugin::class.java).toInstance(plugin)
         bind(GuiceJavaPlugin::class.java).toInstance(plugin)
         bind(Server::class.java).toInstance(plugin.server)
+        bind(ClassLoader::class.java).toInstance(classLoader)
 
         bind(Logger::class.java).annotatedWith(Names.named("pluginLogger")).toInstance(plugin.logger)
 

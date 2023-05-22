@@ -70,21 +70,6 @@ abstract class DIJavaPlugin : JavaPlugin() {
         value
     }
 
-    fun getParameters(parameters: List<KParameter>, vararg additional: Any?): List<Any?> = parameters.map { parameter ->
-        val qualifier = getQualifier(parameter.annotations)
-
-        val type = parameter.type.classifier as KClass<*>
-
-        val additionalValue = additional.filterNotNull().firstOrNull { type.isInstance(it) }
-        val value = additionalValue ?: getDI(type, qualifier)
-
-        if (value == null && !parameter.isOptional) {
-            error("Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
-        }
-
-        value
-    }
-
     private fun scanForMinecraftAnnotationsInClassesOnEnable(classes: List<KClass<*>>) {
         classes
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
