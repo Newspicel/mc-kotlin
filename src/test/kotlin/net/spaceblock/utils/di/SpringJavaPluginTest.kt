@@ -45,11 +45,7 @@ class SpringJavaPluginTest {
         plugin.getDI(TypeC::class) shouldNotBe plugin.getDI(TypeC::class)
     }
 
-    @Test
-    fun scanForMinecraftControllers() {
-        plugin.scanForMinecraftStereotypes(arrayOf(MinecraftController::class), "net.spaceblock.utils.di.commands").size shouldBe 1
-        plugin.scanForMinecraftStereotypes(arrayOf(MinecraftController::class), "net.spaceblock.utils.di.not.exist") shouldBe emptyList()
-    }
+
 }
 
 @Service

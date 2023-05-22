@@ -60,7 +60,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
         val reflections = Reflections(cfg)
         return stereotypes
-            .map { reflections.getTypesAnnotatedWith(it.objectInstance) }
+            .map { reflections.getTypesAnnotatedWith(it.javaObjectType) }
             .flatten()
             .map { it.kotlin }
     }
