@@ -32,6 +32,6 @@ open class UtilsTests {
         val log = logger(plugin).value
         log shouldNotBe null
         log shouldBe plugin.logger
-        log shouldBe plugin.getDI(Logger::class, "pluginLogger")
+        log shouldBe plugin.getExistingBinding(Logger::class, "pluginLogger")
     }
 }

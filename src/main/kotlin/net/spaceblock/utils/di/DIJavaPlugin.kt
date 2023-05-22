@@ -29,7 +29,9 @@ abstract class DIJavaPlugin : JavaPlugin() {
     abstract val projectPackagePath: String
 
     abstract fun startDI()
-    abstract fun <T : Any> getDI(type: KClass<T>, qualifier: String? = null): T?
+    abstract fun <T : Any> getExistingBinding(type: KClass<T>, qualifier: String? = null): T?
+    abstract fun <T : Any> getInstance(type: KClass<T>, qualifier: String? = null): T?
+
     abstract fun getQualifier(annotation: List<Annotation>): String?
 
 
@@ -75,7 +77,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
         }
 
         val additionalValue = additional.filterNotNull().firstOrNull { type.isInstance(it) }
-        val value = additionalValue ?: getDI(type, qualifier)
+        val value = additionalValue ?: getExistingBinding(type, qualifier)
 
         if (value == null && !parameter.isOptional) {
             error("Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")

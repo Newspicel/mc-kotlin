@@ -31,7 +31,7 @@ open class EventsTests {
 
     @Test
     fun `is event registered`(): Unit = runBlocking {
-        val eventsTestController = plugin.getDI(EventsTestController::class)
+        val eventsTestController = plugin.getExistingBinding(EventsTestController::class)
         val player = server.addPlayer()
         delay(1000)
         eventsTestController?.test shouldBe 1

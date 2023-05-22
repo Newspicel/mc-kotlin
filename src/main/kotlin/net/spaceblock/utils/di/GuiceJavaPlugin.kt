@@ -34,14 +34,26 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
             }
     }
 
-    override fun <T : Any> getDI(type: KClass<T>, qualifier: String?): T? {
-        return if (qualifier == null) {
-            injector.getInstance(type.java)
+    override fun <T : Any> getExistingBinding(type: KClass<T>, qualifier: String?): T? {
+        val key = if (qualifier == null){
+            Key.get(type.java)
         } else {
-            val key: Key<T> = Key.get(type.java, Names.named(qualifier))
-
-            injector.getInstance(key) ?: injector.getInstance(type.java)
+            Key.get(type.java, Names.named(qualifier))
         }
+
+        return injector.getExistingBinding(key).source?.let {
+            injector.getInstance(key)
+        }
+    }
+
+    override fun <T : Any> getInstance(type: KClass<T>, qualifier: String?): T? {
+        val key = if (qualifier == null){
+            Key.get(type.java)
+        } else {
+            Key.get(type.java, Names.named(qualifier))
+        }
+
+        return injector.getInstance(key)
     }
 
     override fun getQualifier(annotation: List<Annotation>): String? {

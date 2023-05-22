@@ -27,7 +27,7 @@ open class ServerEventsTests {
 
     @Test
     fun `should work`() {
-        val serverEventsTestController = plugin.getDI(ServerEventsTestController::class)
+        val serverEventsTestController = plugin.getExistingBinding(ServerEventsTestController::class)
         serverEventsTestController?.onLoad shouldBe true
         serverEventsTestController?.onEnable shouldBe true
         serverEventsTestController?.onDisable shouldBe false

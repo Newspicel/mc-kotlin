@@ -49,7 +49,7 @@ open class CommandTests {
 
     @Test
     fun `check command is run`(): Unit = runBlocking {
-        val ctc = plugin.getDI(CommandTestController::class)
+        val ctc = plugin.getExistingBinding(CommandTestController::class)
         ctc?.i = 0
         server.addPlayer()
         repeat(10) {

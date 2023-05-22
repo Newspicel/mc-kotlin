@@ -31,18 +31,18 @@ class SpringJavaPluginTest {
 
     @Test
     fun getDI() {
-        plugin.getDI(CommandTestController::class) shouldNotBe null
-        plugin.getDI(CommandTestController::class) shouldBe plugin.getDI(CommandTestController::class)
-        plugin.getDI(Server::class) shouldNotBe null
-        plugin.getDI(Server::class) shouldBe plugin.getDI(Server::class)
-        plugin.getDI(Server::class) shouldBe plugin.server
-        plugin.getDI(JavaPlugin::class) shouldNotBe null
-        plugin.getDI(JavaPlugin::class) shouldBe plugin.getDI(JavaPlugin::class)
-        plugin.getDI(TypeA::class) shouldNotBe null
-        plugin.getDI(TypeA::class) shouldBe plugin.getDI(TypeA::class)
-        plugin.getDI(TypeB::class) shouldNotBe null
-        plugin.getDI(TypeB::class) shouldBe plugin.getDI(TypeB::class)
-        plugin.getDI(TypeC::class) shouldNotBe plugin.getDI(TypeC::class)
+        plugin.getExistingBinding(CommandTestController::class) shouldNotBe null
+        plugin.getExistingBinding(CommandTestController::class) shouldBe plugin.getExistingBinding(CommandTestController::class)
+        plugin.getExistingBinding(Server::class) shouldNotBe null
+        plugin.getExistingBinding(Server::class) shouldBe plugin.getExistingBinding(Server::class)
+        plugin.getExistingBinding(Server::class) shouldBe plugin.server
+        plugin.getExistingBinding(JavaPlugin::class) shouldNotBe null
+        plugin.getExistingBinding(JavaPlugin::class) shouldBe plugin.getExistingBinding(JavaPlugin::class)
+        plugin.getInstance(TypeA::class) shouldNotBe null
+        plugin.getInstance(TypeA::class) shouldBe plugin.getInstance(TypeA::class)
+        plugin.getInstance(TypeB::class) shouldNotBe null
+        plugin.getInstance(TypeB::class) shouldBe plugin.getInstance(TypeB::class)
+        plugin.getInstance(TypeC::class) shouldNotBe plugin.getInstance(TypeC::class)
     }
 
 
