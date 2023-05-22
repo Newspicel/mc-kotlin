@@ -4,7 +4,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import net.spaceblock.utils.di.DIJavaPlugin
 import org.bukkit.event.EventException
 import org.bukkit.event.Listener
@@ -40,16 +39,12 @@ object EventHelper {
             val isEventCancellable = event is org.bukkit.event.Cancellable
 
             if (isEventCancellable) {
-                runBlocking {
+                runBlocking(eventScope.coroutineContext) {
                     func.callSuspendBy(params)
                 }
             } else {
-                try {
-                    eventScope.launch {
-                        func.callSuspendBy(params)
-                    }
-                } catch (e: Exception) {
-                    plugin.logger.log(Level.SEVERE, "Failed to execute event ${eventAnnotation.event.simpleName}", e)
+                eventScope.launch {
+                    func.callSuspendBy(params)
                 }
             }
         } catch (e: Exception) {
