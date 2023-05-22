@@ -58,7 +58,11 @@ abstract class DIJavaPlugin : JavaPlugin() {
     fun getParameterMap(parameters: List<KParameter>, vararg additional: Any?): Map<KParameter, Any?> = parameters.associateWith { parameter ->
         val qualifier = getQualifier(parameter.annotations)
 
-        val type = parameter.type.classifier as KClass<*>
+        val type = if (parameter.type.classifier is KClass<*>) {
+            parameter.type.classifier as KClass<*>
+        } else {
+            error("Unexpected classifier type: ${parameter.type.classifier}")
+        }
 
         val additionalValue = additional.filterNotNull().firstOrNull { type.isInstance(it) }
         val value = additionalValue ?: getDI(type, qualifier)
