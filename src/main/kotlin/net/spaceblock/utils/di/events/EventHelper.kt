@@ -9,7 +9,7 @@ import org.bukkit.event.EventException
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
 import java.util.logging.Level
-import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspendBy
 
 object EventHelper {
@@ -18,7 +18,7 @@ object EventHelper {
 
     private val emptyListener = object : Listener {}
 
-    fun registerEvent(plugin: DIJavaPlugin, eventAnnotation: Event, func: KCallable<*>) {
+    fun registerEvent(plugin: DIJavaPlugin, eventAnnotation: Event, func: KFunction<*>) {
         val eventClass = eventAnnotation.event
         plugin.server.pluginManager.registerEvent(
             eventClass.java,
@@ -30,7 +30,7 @@ object EventHelper {
         )
     }
 
-    private fun createEventExecutor(plugin: DIJavaPlugin, func: KCallable<*>, eventAnnotation: Event): EventExecutor = EventExecutor { _, event ->
+    private fun createEventExecutor(plugin: DIJavaPlugin, func: KFunction<*>, eventAnnotation: Event): EventExecutor = EventExecutor { _, event ->
         if (!eventAnnotation.event.isInstance(event)) error("Event is not instance of ${eventAnnotation.event}, this should never happen!")
 
         val params = plugin.getParameterMap(func.parameters, event)

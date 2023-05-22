@@ -15,6 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotations
+import kotlin.reflect.full.functions
 
 abstract class DIJavaPlugin : JavaPlugin() {
 
@@ -88,7 +89,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
         classes
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
             .forEach { clazz ->
-                clazz.members.forEach { func ->
+                clazz.functions.forEach { func ->
                     func.annotations.forEach { annotation ->
                         when (annotation) {
                             is Command -> {
@@ -112,7 +113,7 @@ abstract class DIJavaPlugin : JavaPlugin() {
         classes
             .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
             .forEach { clazz ->
-                clazz.members.forEach { func ->
+                clazz.functions.forEach { func ->
                     func.annotations.forEach { annotation ->
                         when (annotation) {
                             is OnEnable -> {

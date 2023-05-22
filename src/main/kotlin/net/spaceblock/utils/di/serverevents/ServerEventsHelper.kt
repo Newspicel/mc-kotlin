@@ -2,26 +2,26 @@ package net.spaceblock.utils.di.serverevents
 
 import kotlinx.coroutines.runBlocking
 import net.spaceblock.utils.di.DIJavaPlugin
-import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspendBy
 
 object ServerEventsHelper {
 
-    private val onEnable = mutableListOf<KCallable<*>>()
+    private val onEnable = mutableListOf<KFunction<*>>()
 
-    private val onDisable = mutableListOf<KCallable<*>>()
+    private val onDisable = mutableListOf<KFunction<*>>()
 
-    private val onLoad = mutableListOf<KCallable<*>>()
+    private val onLoad = mutableListOf<KFunction<*>>()
 
-    fun registerOnEnable(function: KCallable<*>) {
+    fun registerOnEnable(function: KFunction<*>) {
         onEnable.add(function)
     }
 
-    fun registerOnDisable(function: KCallable<*>) {
+    fun registerOnDisable(function: KFunction<*>) {
         onDisable.add(function)
     }
 
-    fun registerOnLoad(function: KCallable<*>) {
+    fun registerOnLoad(function: KFunction<*>) {
         onLoad.add(function)
     }
 

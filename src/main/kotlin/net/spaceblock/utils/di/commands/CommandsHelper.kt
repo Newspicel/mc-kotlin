@@ -1,9 +1,7 @@
 package net.spaceblock.utils.di.commands
 
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextColor
@@ -16,18 +14,17 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Level
-import kotlin.reflect.KCallable
+import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.callSuspendBy
 import kotlin.reflect.full.findAnnotation
-import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.isAccessible
 
 object CommandsHelper {
 
     private val commandScope = CoroutineScope(Dispatchers.Default)
 
-    fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KCallable<*>) {
+    fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KFunction<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
         pluginCommand.aliases = command.aliases.toList()
         pluginCommand.description = command.description.ifEmpty { "No description provided" }
@@ -40,7 +37,7 @@ object CommandsHelper {
         }
     }
 
-    fun registerTabComplete(plugin: DIJavaPlugin, tabComplete: TabComplete, func: KCallable<*>) {
+    fun registerTabComplete(plugin: DIJavaPlugin, tabComplete: TabComplete, func: KFunction<*>) {
         val pluginCommand = getBukkitCommand(tabComplete.label, plugin)
         pluginCommand.tabCompleter = createTabCompleter(plugin, func, tabComplete)
     }
@@ -54,7 +51,7 @@ object CommandsHelper {
         }
     }
 
-    private fun createCommandExecutor(plugin: DIJavaPlugin, func: KCallable<*>, command: Command): CommandExecutor = CommandExecutor { sender, _, label, args ->
+    private fun createCommandExecutor(plugin: DIJavaPlugin, func: KFunction<*>, command: Command): CommandExecutor = CommandExecutor { sender, _, label, args ->
         if (command.label != label) error("This should never happen")
 
         if (!checkPermissions(sender, func)) {
@@ -71,7 +68,7 @@ object CommandsHelper {
             null
         }
 
-        //val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList())
+        // val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList())
         val params = plugin.getParameters(func.parameters, player, sender, label, args, args.toList()).toTypedArray()
 
         func.parameters.forEach { param ->
@@ -100,7 +97,7 @@ object CommandsHelper {
         }
     }
 
-    private fun createTabCompleter(plugin: DIJavaPlugin, func: KCallable<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
+    private fun createTabCompleter(plugin: DIJavaPlugin, func: KFunction<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
         if (tabComplete.label != label) error("This should never happen")
 
         if (!checkPermissions(sender, func)) {
@@ -137,7 +134,7 @@ object CommandsHelper {
     }
 
     @Suppress("RedundantIf")
-    private fun checkPermissions(sender: CommandSender, func: KCallable<*>): Boolean {
+    private fun checkPermissions(sender: CommandSender, func: KFunction<*>): Boolean {
         val permission = func.findAnnotation<HasPermission>()
         if (permission != null && !sender.hasPermission(permission.permission)) {
             return false
