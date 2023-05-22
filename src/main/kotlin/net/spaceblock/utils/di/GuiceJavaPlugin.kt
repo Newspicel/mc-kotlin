@@ -27,12 +27,10 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
     override fun startDI() {
         val module = MinecraftGuiceModule(this, stereotypesClasses, classLoader)
 
-        val old = Thread.currentThread().contextClassLoader
         try {
-            Thread.currentThread().contextClassLoader = classLoader
             injector = Guice.createInjector(module)
-        } finally {
-            Thread.currentThread().contextClassLoader = old
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         stereotypesClasses
@@ -84,6 +82,7 @@ class MinecraftGuiceModule(
     override fun configure() {
         bind(JavaPlugin::class.java).toInstance(plugin)
         bind(GuiceJavaPlugin::class.java).toInstance(plugin)
+        bind(DIJavaPlugin::class.java).toInstance(plugin)
         bind(Server::class.java).toInstance(plugin.server)
         bind(ClassLoader::class.java).toInstance(classLoader)
 
