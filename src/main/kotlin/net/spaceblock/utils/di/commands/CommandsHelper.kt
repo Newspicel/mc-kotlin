@@ -68,21 +68,28 @@ object CommandsHelper {
             null
         }
 
-        // val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList())
-        val params = plugin.getParameters(func.parameters, player, sender, label, args, args.toList()).toTypedArray()
+        val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList())
+        //val params = plugin.getParameters(func.parameters, player, sender, label, args, args.toList()).toTypedArray()
 
-        func.parameters.forEach { param ->
-            println("Parameter: ${param.name} - ${param.type}")
-        }
+        func.parameters.forEach {
+            val value = paramsMap[it]
+            if (value == null) {
+                plugin.logger.log(Level.WARNING, "Failed to get parameter ${it.name} for command $label")
+            }
 
-        params.forEach { param ->
-            println(param)
+
+
+            //Check if value is instance of it.type
+            if (value != null && it.type.classifier is Class<*> && !(it.type.classifier as Class<*>).isInstance(value)) {
+                plugin.logger.log(Level.WARNING, "Parameter ${it.name} for command $label is not instance of ${it.type}")
+            }
+
         }
 
         try {
             commandScope.launch {
                 try {
-                    func.callSuspend(*params)
+                    func.callSuspend(paramsMap)
                 } catch (e: Exception) {
                     sender.sendMessage(text("An error occurred while executing this command").color(TextColor.color(0xFF0000)))
                     plugin.logger.log(Level.WARNING, "An error occurred while executing command $label", e)
