@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.format.TextColor
-import net.spaceblock.utils.adventure.text
+import net.spaceblock.utils.chat.text
 import net.spaceblock.utils.di.DIJavaPlugin
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

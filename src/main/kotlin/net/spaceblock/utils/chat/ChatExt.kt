@@ -1,4 +1,4 @@
-package net.spaceblock.utils.adventure
+package net.spaceblock.utils.chat
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.JoinConfiguration

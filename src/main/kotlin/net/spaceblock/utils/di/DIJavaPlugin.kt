@@ -1,6 +1,6 @@
 package net.spaceblock.utils.di
 
-import net.spaceblock.utils.adventure.text
+import net.spaceblock.utils.chat.text
 import net.spaceblock.utils.di.commands.Command
 import net.spaceblock.utils.di.commands.CommandsHelper
 import net.spaceblock.utils.di.commands.TabComplete

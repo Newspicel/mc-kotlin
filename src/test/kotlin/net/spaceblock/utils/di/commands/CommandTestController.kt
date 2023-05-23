@@ -1,12 +1,15 @@
 package net.spaceblock.utils.di.commands
 
 import kotlinx.coroutines.delay
-import net.spaceblock.utils.adventure.text
+import net.spaceblock.utils.chat.text
 import net.spaceblock.utils.di.MinecraftController
 import org.bukkit.entity.Player
+import org.bukkit.plugin.java.JavaPlugin
 
 @MinecraftController
-class CommandTestController() {
+class CommandTestController(
+    private val plugin: JavaPlugin,
+) {
 
     var i = 0
 

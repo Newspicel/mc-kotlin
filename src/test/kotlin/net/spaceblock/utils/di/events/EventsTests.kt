@@ -5,7 +5,7 @@ import be.seeseemelk.mockbukkit.ServerMock
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import net.spaceblock.utils.adventure.text
+import net.spaceblock.utils.chat.text
 import net.spaceblock.utils.di.TestPlugin
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
