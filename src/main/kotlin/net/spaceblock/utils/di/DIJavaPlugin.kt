@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
+import kotlin.math.log
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotations
@@ -80,6 +81,9 @@ abstract class DIJavaPlugin : JavaPlugin() {
         val value = additionalValue ?: getExistingBinding(type, qualifier)
 
         if (value == null && !parameter.isOptional) {
+            logger.log(
+                java.util.logging.Level.SEVERE,
+                "Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
             error("Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
         }
 

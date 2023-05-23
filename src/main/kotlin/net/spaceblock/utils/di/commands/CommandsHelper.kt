@@ -29,7 +29,7 @@ object CommandsHelper {
 
     private val commandScope = CoroutineScope(Dispatchers.Default)
 
-    private val continuation = object : Continuation<Unit> {
+    class RandomContinuation: Continuation<Unit> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
@@ -37,6 +37,9 @@ object CommandsHelper {
             println("resumeWith $result")
         }
     }
+
+    val continuation = RandomContinuation()
+
 
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KFunction<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
