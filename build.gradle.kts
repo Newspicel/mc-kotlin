@@ -29,10 +29,8 @@ dependencies {
 
     // Guice
     compileOnly("com.google.inject:guice:6.0.0")
-    compileOnly("org.reflections:reflections:0.10.2")
-
     testImplementation("com.google.inject:guice:6.0.0")
-    testImplementation("org.reflections:reflections:0.10.2")
+    implementation("org.reflections:reflections:0.10.2")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))
