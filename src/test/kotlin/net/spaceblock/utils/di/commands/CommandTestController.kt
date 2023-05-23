@@ -3,7 +3,14 @@ package net.spaceblock.utils.di.commands
 import kotlinx.coroutines.delay
 import net.spaceblock.utils.chat.text
 import net.spaceblock.utils.di.MinecraftController
+import net.spaceblock.utils.itemstack.flag
+import net.spaceblock.utils.itemstack.itemStack
+import net.spaceblock.utils.itemstack.meta
+import net.spaceblock.utils.itemstack.name
+import net.spaceblock.utils.itemstack.setLore
+import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.plugin.java.JavaPlugin
 
 @MinecraftController

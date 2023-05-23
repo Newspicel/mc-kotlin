@@ -7,5 +7,17 @@ A Kotlin Wrapper for Minecraft Development
 - [x] Dependency Injection via Spring
 - [x] Simple Command, Event Registration via Annotations: @Command, @Event, @OnEnable, @OnDisable, @OnLoad
 - [x] Adventure API Kotlin Extensions
-- [ ] Kotlin Minecraft Coroutines Layer
-- [ ] Kotlin Minecraft DSL: Inventory, ItemStack, etc.
+- [x] Kotlin Minecraft Coroutines Layer
+- [x] Kotlin Minecraft DSL: Inventory, ItemStack, etc.
+
+
+## Docs:
+
+How to Integrate this Lib into your plugin: [Integration Guide](docs/Integration.md)
+
+- [Chat](docs/Chat.md)
+- [Coroutine](docs/Coroutine.md)
+- [Di](docs/Di.md)
+- [Itemstack](docs/Itemstack.md)
+- [Scheduler](docs/Scheduler.md)
+- [Utils](docs/Utils.md)

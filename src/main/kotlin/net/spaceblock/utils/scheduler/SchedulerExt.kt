@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package net.spaceblock.utils.scheduler
 
 import net.spaceblock.utils.coroutine.asyncDispatcher
@@ -7,12 +9,6 @@ import org.bukkit.scheduler.BukkitTask
 
 private fun suspendToRunnable(plugin: JavaPlugin, block: suspend () -> Unit) = Runnable { plugin.launch { block() } }
 private fun suspendToAsynchronouslyRunnable(plugin: JavaPlugin, block: suspend () -> Unit) = Runnable { plugin.launch(plugin.asyncDispatcher) { block() } }
-
-private fun generateRepeatTask(repeat: Long, delay: Long, register: (Long) -> BukkitTask) {
-    for (i in 0 until repeat) {
-        register(delay * i)
-    }
-}
 
 fun runTask(plugin: JavaPlugin, block: () -> Unit) = plugin.server.scheduler.runTask(plugin, block)
 
