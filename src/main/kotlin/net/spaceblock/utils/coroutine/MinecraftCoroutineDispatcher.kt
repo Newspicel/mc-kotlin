@@ -17,7 +17,7 @@ class MinecraftCoroutineDispatcher(
             runBlocking { block.run() }
             plugin.logger.warning("Blocking coroutine on main thread")
         } else {
-            plugin.server.scheduler.runTaskAsynchronously(plugin, block)
+            plugin.server.scheduler.runTask(plugin, block)
         }
     }
 }

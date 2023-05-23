@@ -8,7 +8,6 @@ version = properties["version"] as String
 
 val kotlinCoroutinesVersion = "1.7.1"
 val koTestVersion = "5.6.2"
-val guiceVersion = "6.0.0"
 
 repositories {
     mavenCentral()
@@ -29,8 +28,8 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlinCoroutinesVersion")
 
     // Guice
-    implementation("com.google.inject:guice:$guiceVersion")
-    implementation("org.reflections:reflections:0.10.2")
+    compileOnly("com.google.inject:guice:6.0.0")
+    compileOnly("org.reflections:reflections:0.10.2")
 
     testImplementation(kotlin("test"))
     testImplementation(kotlin("test-junit5"))

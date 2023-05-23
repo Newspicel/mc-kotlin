@@ -1,7 +1,6 @@
 package net.spaceblock.utils.coroutine
 
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.runBlocking
 import org.bukkit.plugin.java.JavaPlugin
@@ -12,7 +11,6 @@ class MinecraftAsyncCoroutineDispatcher(
 ) : CoroutineDispatcher() {
 
     override fun isDispatchNeeded(context: CoroutineContext): Boolean {
-        Dispatchers.Default
         return true
     }
     override fun dispatch(context: CoroutineContext, block: Runnable) {

@@ -14,9 +14,6 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Level
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.callSuspendBy
 import kotlin.reflect.full.findAnnotation
@@ -25,17 +22,6 @@ import kotlin.reflect.jvm.isAccessible
 object CommandsHelper {
 
     private val commandScope = CoroutineScope(Dispatchers.Default)
-
-    class RandomContinuation : Continuation<Unit> {
-        override val context: CoroutineContext
-            get() = EmptyCoroutineContext
-
-        override fun resumeWith(result: Result<Unit>) {
-            println("resumeWith $result")
-        }
-    }
-
-    private val continuation: Continuation<in Unit> = RandomContinuation()
 
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KFunction<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
@@ -83,11 +69,7 @@ object CommandsHelper {
 
         try {
             commandScope.launch {
-                val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList(), continuation)
-
-                paramsMap.forEach {
-                    println("param: ${it.key} -> ${it.value}")
-                }
+                val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList())
 
                 try {
                     func.callSuspendBy(paramsMap)
