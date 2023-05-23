@@ -44,8 +44,6 @@ class SpringJavaPluginTest {
         plugin.getInstance(TypeB::class) shouldBe plugin.getInstance(TypeB::class)
         plugin.getInstance(TypeC::class) shouldNotBe plugin.getInstance(TypeC::class)
     }
-
-
 }
 
 @Service

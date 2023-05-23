@@ -14,7 +14,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
-import kotlin.math.log
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotations
@@ -34,7 +33,6 @@ abstract class DIJavaPlugin : JavaPlugin() {
     abstract fun <T : Any> getInstance(type: KClass<T>, qualifier: String? = null): T?
 
     abstract fun getQualifier(annotation: List<Annotation>): String?
-
 
     override fun onLoad() {
         logger.info("Scanning for Minecraft controllers in $projectPackagePath")
@@ -69,69 +67,58 @@ abstract class DIJavaPlugin : JavaPlugin() {
     }
 
     fun getParameterMap(parameters: List<KParameter>, vararg additional: Any?): Map<KParameter, Any?> = parameters.associateWith { parameter ->
-        val qualifier = getQualifier(parameter.annotations)
+        val type = parameter.type.classifier as KClass<*>
 
-        val type = if (parameter.type.classifier is KClass<*>) {
-            parameter.type.classifier as KClass<*>
-        } else {
-            error("Unexpected classifier type: ${parameter.type.classifier}")
+        if (parameter.kind == KParameter.Kind.INSTANCE) {
+            return@associateWith getExistingBinding(type)
         }
 
-        val additionalValue = additional.filterNotNull().firstOrNull { type.isInstance(it) }
-        val value = additionalValue ?: getExistingBinding(type, qualifier)
-
-        if (value == null && !parameter.isOptional) {
-            logger.log(
-                java.util.logging.Level.SEVERE,
-                "Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
-            error("Could not find a value for parameter ${parameter.name} of type ${parameter.type} with qualifier $qualifier")
-        }
-
-        value
+        additional.filterNotNull().firstOrNull { type.isInstance(it) }
+            ?: error("Could not find a value for parameter ${parameter.name} of type ${parameter.type}")
     }
 
     private fun scanForMinecraftAnnotationsInClassesOnEnable() {
         controllerClasses.forEach { clazz ->
-                clazz.functions.forEach { func ->
-                    func.annotations.forEach { annotation ->
-                        when (annotation) {
-                            is Command -> {
-                                CommandsHelper.registerCommand(this, annotation, func)
-                            }
+            clazz.functions.forEach { func ->
+                func.annotations.forEach { annotation ->
+                    when (annotation) {
+                        is Command -> {
+                            CommandsHelper.registerCommand(this, annotation, func)
+                        }
 
-                            is TabComplete -> {
-                                CommandsHelper.registerTabComplete(this, annotation, func)
-                            }
+                        is TabComplete -> {
+                            CommandsHelper.registerTabComplete(this, annotation, func)
+                        }
 
-                            is Event -> {
-                                EventHelper.registerEvent(this, annotation, func)
-                            }
+                        is Event -> {
+                            EventHelper.registerEvent(this, annotation, func)
                         }
                     }
                 }
             }
+        }
     }
 
     private fun scanForMinecraftAnnotationsInClassesOnLoad() {
         controllerClasses.forEach { clazz ->
-                clazz.functions.forEach { func ->
-                    func.annotations.forEach { annotation ->
-                        when (annotation) {
-                            is OnEnable -> {
-                                ServerEventsHelper.registerOnEnable(func)
-                            }
+            clazz.functions.forEach { func ->
+                func.annotations.forEach { annotation ->
+                    when (annotation) {
+                        is OnEnable -> {
+                            ServerEventsHelper.registerOnEnable(func)
+                        }
 
-                            is OnDisable -> {
-                                ServerEventsHelper.registerOnDisable(func)
-                            }
+                        is OnDisable -> {
+                            ServerEventsHelper.registerOnDisable(func)
+                        }
 
-                            is OnLoad -> {
-                                ServerEventsHelper.registerOnLoad(func)
-                            }
+                        is OnLoad -> {
+                            ServerEventsHelper.registerOnLoad(func)
                         }
                     }
                 }
             }
+        }
     }
 
     // Lock this stuff down

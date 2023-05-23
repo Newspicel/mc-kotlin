@@ -17,10 +17,7 @@ import java.util.logging.Level
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.callSuspend
 import kotlin.reflect.full.callSuspendBy
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.isAccessible
@@ -29,7 +26,7 @@ object CommandsHelper {
 
     private val commandScope = CoroutineScope(Dispatchers.Default)
 
-    class RandomContinuation: Continuation<Unit> {
+    class RandomContinuation : Continuation<Unit> {
         override val context: CoroutineContext
             get() = EmptyCoroutineContext
 
@@ -38,8 +35,7 @@ object CommandsHelper {
         }
     }
 
-    val continuation = RandomContinuation()
-
+    private val continuation: Continuation<in Unit> = RandomContinuation()
 
     fun registerCommand(plugin: DIJavaPlugin, command: Command, func: KFunction<*>) {
         val pluginCommand = getBukkitCommand(command.label, plugin)
@@ -85,10 +81,13 @@ object CommandsHelper {
             null
         }
 
-
         try {
             commandScope.launch {
                 val paramsMap = plugin.getParameterMap(func.parameters, player, sender, label, args, args.toList(), continuation)
+
+                paramsMap.forEach {
+                    println("param: ${it.key} -> ${it.value}")
+                }
 
                 try {
                     func.callSuspendBy(paramsMap)
