@@ -12,7 +12,6 @@ class PluginClasspathBuilderExtTest {
         builder.addMavenLibrary {
             mavenCentral()
             dependency("org.jetbrains.kotlin", "kotlin-stdlib", "1.5.21")
-            mcKotlinRepo()
         }
 
         val libraries = builder.getLibraries()
@@ -23,9 +22,8 @@ class PluginClasspathBuilderExtTest {
         maven::class.java.getDeclaredField("repositories").apply {
             isAccessible = true
             val repositories = get(maven) as List<*>
-            repositories.size shouldBe 2
+            repositories.size shouldBe 1
             repositories[0].toString() shouldBe "central (https://repo.maven.apache.org/maven2/, default, releases+snapshots)"
-            repositories[1].toString() shouldBe "mc-kotlin (https://maven.pkg.github.com/spaceblocknet/mc-kotlin, default, releases+snapshots)"
         }
 
         maven::class.java.getDeclaredField("dependencies").apply {
