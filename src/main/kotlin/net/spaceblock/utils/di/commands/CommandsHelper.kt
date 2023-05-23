@@ -94,7 +94,7 @@ object CommandsHelper {
             return@TabCompleter emptyList()
         }
 
-        val params = plugin.getParameterMap(func.parameters, sender, label, args)
+        val params = plugin.getParameterMap(func.parameters, sender, label, args, args.toList())
 
         val result = try {
             runBlocking(Dispatchers.Default) {
