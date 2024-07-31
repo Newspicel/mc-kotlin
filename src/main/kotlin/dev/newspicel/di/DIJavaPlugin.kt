@@ -26,7 +26,8 @@ abstract class DIJavaPlugin : JavaPlugin() {
     protected lateinit var stereotypesClasses: List<KClass<*>>
     private lateinit var controllerClasses: List<KClass<*>>
 
-    private val projectPackagePath: String = this.javaClass.`package`.name
+    open val projectPackagePath: String
+        get() = this.javaClass.`package`.name
 
     abstract fun startDI()
     abstract fun <T : Any> getExistingBinding(type: KClass<T>, qualifier: String? = null): T?
