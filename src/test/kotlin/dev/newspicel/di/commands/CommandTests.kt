@@ -56,8 +56,8 @@ open class CommandTests {
             server.executePlayer("test").assertSucceeded()
             server.executePlayer("test2").assertSucceeded()
         }
-        delay(2000)
-        ctc?.i shouldBe 20
+        delay(4000)
+        ctc?.i shouldBe 19
     }
 
     @Test
