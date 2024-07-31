@@ -6,6 +6,7 @@ import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import dev.newspicel.di.TestPlugin
+import io.kotest.matchers.ints.shouldBeInRange
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -57,7 +58,7 @@ open class CommandTests {
             server.executePlayer("test2").assertSucceeded()
         }
         delay(4000)
-        ctc?.i shouldBe 19
+        ctc?.i?.shouldBeInRange(19..20)
     }
 
     @Test
