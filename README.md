@@ -4,12 +4,10 @@
 A Kotlin Wrapper for Minecraft Development
 
 ## Features
-- [x] Dependency Injection via Guice
-- [x] Simple Command, Event Registration via Annotations: @Command, @Event, @OnEnable, @OnDisable, @OnLoad
-- [x] Adventure API Kotlin Extensions
-- [x] Kotlin Minecraft Coroutines Layer
-- [x] Kotlin Minecraft DSL: Inventory, ItemStack, etc.
-
+- Dependency Injection via Guice
+- Simple Command, Event Registration via Annotations: @Command, @Event, @OnEnable, @OnDisable, @OnLoad
+- Adventure API Kotlin Extensions
+- Kotlin Minecraft Coroutines Layer
 
 ## Docs:
 
