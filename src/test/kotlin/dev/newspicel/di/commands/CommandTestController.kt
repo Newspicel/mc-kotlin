@@ -1,26 +1,12 @@
 package dev.newspicel.di.commands
 
-import kotlinx.coroutines.delay
 import dev.newspicel.di.MinecraftController
-import dev.newspicel.di.commands.Command
-import dev.newspicel.di.commands.HasPermission
-import dev.newspicel.di.commands.IsOp
-import dev.newspicel.di.commands.TabComplete
-import dev.newspicel.itemstack.flag
-import dev.newspicel.itemstack.itemStack
-import dev.newspicel.itemstack.meta
-import dev.newspicel.itemstack.name
-import dev.newspicel.itemstack.setLore
+import kotlinx.coroutines.delay
 import net.kyori.adventure.text.Component.text
-import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemFlag
-import org.bukkit.plugin.java.JavaPlugin
 
 @MinecraftController
-class CommandTestController(
-    private val plugin: JavaPlugin,
-) {
+class CommandTestController {
 
     var i = 0
 
