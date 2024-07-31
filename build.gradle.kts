@@ -1,42 +1,35 @@
 plugins {
-    kotlin("jvm") version "1.8.21"
+    alias(libs.plugins.kotlin.jvm)
     `maven-publish`
 }
 
-group = "net.spaceblock.utils"
+group = "dev.newspicel"
 version = properties["version"] as String
-
-val kotlinCoroutinesVersion = "1.7.1"
-val koTestVersion = "5.6.2"
 
 repositories {
     mavenCentral()
-    maven {
-        name = "papermc"
-        url = uri("https://repo.papermc.io/repository/maven-public/")
-    }
+    maven("https://repo.papermc.io/repository/maven-public/")
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
+    compileOnly(libs.paper.api)
 
     // KReflection
-    implementation(kotlin("reflect"))
+    implementation(libs.kotlin.reflect)
 
     // Kotlin Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinCoroutinesVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:$kotlinCoroutinesVersion")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.reactive)
 
     // Guice
-    compileOnly("com.google.inject:guice:6.0.0")
-    testImplementation("com.google.inject:guice:6.0.0")
-    implementation("org.reflections:reflections:0.10.2")
+    implementation(libs.guice)
+    implementation(libs.reflections)
 
-    testImplementation(kotlin("test"))
-    testImplementation(kotlin("test-junit5"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$kotlinCoroutinesVersion")
-    testImplementation("com.github.seeseemelk:MockBukkit-v1.19:3.1.0")
-    testImplementation("io.kotest:kotest-assertions-core-jvm:$koTestVersion")
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockbukkit)
+    testImplementation(libs.kotest)
 }
 
 tasks.test {
@@ -44,7 +37,7 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
 }
 
 publishing {
@@ -56,7 +49,7 @@ publishing {
     repositories {
         maven {
             name = "github"
-            url = uri("https://maven.pkg.github.com/spaceblocknet/mc-kotlin")
+            url = uri("https://maven.pkg.github.com/newspicel/mc-kotlin")
             credentials {
                 username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
                 password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
