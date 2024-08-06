@@ -31,7 +31,7 @@ object EventHelper {
     }
 
     private fun createEventExecutor(plugin: DIJavaPlugin, func: KFunction<*>, eventAnnotation: Event): EventExecutor = EventExecutor { _, event ->
-        if (!eventAnnotation.event.isInstance(event)) error("Event is not instance of ${eventAnnotation.event} it is instance of ${event::class}, this should never happen!")
+        if (!eventAnnotation.event.isInstance(event)) return@EventExecutor
 
         val params = plugin.getParameterMap(func.parameters, event)
 
