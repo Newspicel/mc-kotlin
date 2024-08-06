@@ -1,12 +1,12 @@
 package dev.newspicel.di.commands
 
+import dev.newspicel.di.DIJavaPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.kyori.adventure.text.format.TextColor
-import dev.newspicel.di.DIJavaPlugin
 import net.kyori.adventure.text.Component.text
+import net.kyori.adventure.text.format.TextColor
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.PluginCommand
@@ -51,8 +51,6 @@ object CommandsHelper {
     }
 
     private fun createCommandExecutor(plugin: DIJavaPlugin, func: KFunction<*>, command: Command): CommandExecutor = CommandExecutor { sender, _, label, args ->
-        if (command.label != label) error("This should never happen")
-
         if (!checkPermissions(sender, func)) {
             sender.sendMessage(text("You don't have permission to execute this command").color(TextColor.color(0xFF0000)))
             return@CommandExecutor false
@@ -88,8 +86,6 @@ object CommandsHelper {
     }
 
     private fun createTabCompleter(plugin: DIJavaPlugin, func: KFunction<*>, tabComplete: TabComplete): TabCompleter = TabCompleter { sender, _, label, args ->
-        if (tabComplete.label != label) error("This should never happen")
-
         if (!checkPermissions(sender, func)) {
             return@TabCompleter emptyList()
         }

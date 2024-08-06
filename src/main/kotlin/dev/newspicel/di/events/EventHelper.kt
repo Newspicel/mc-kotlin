@@ -1,10 +1,10 @@
 package dev.newspicel.di.events
 
+import dev.newspicel.di.DIJavaPlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import dev.newspicel.di.DIJavaPlugin
 import org.bukkit.event.EventException
 import org.bukkit.event.Listener
 import org.bukkit.plugin.EventExecutor
@@ -31,7 +31,7 @@ object EventHelper {
     }
 
     private fun createEventExecutor(plugin: DIJavaPlugin, func: KFunction<*>, eventAnnotation: Event): EventExecutor = EventExecutor { _, event ->
-        if (!eventAnnotation.event.isInstance(event)) error("Event is not instance of ${eventAnnotation.event}, this should never happen!")
+        if (!eventAnnotation.event.isInstance(event)) error("Event is not instance of ${eventAnnotation.event} it is instance of ${event::class}, this should never happen!")
 
         val params = plugin.getParameterMap(func.parameters, event)
 
