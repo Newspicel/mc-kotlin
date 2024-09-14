@@ -1,13 +1,10 @@
 package dev.newspicel.di
 
-import com.google.inject.AbstractModule
-import com.google.inject.Guice
-import com.google.inject.Injector
-import com.google.inject.Key
-import com.google.inject.Singleton
+import com.google.inject.*
 import com.google.inject.name.Named
 import com.google.inject.name.Names
 import org.bukkit.Server
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 import kotlin.reflect.KClass
@@ -22,13 +19,19 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
         logger.info("Starting Guice injector")
         val module = MinecraftGuiceModule(this, stereotypesClasses, classLoader)
 
-        injector = Guice.createInjector(module) ?: error("Could not create Guice injector")
+        try {
+            injector = Guice.createInjector(module) ?: error("Could not create Guice injector")
 
-        stereotypesClasses
-            .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
-            .forEach {
-                injector.getInstance(it.java)
-            }
+            stereotypesClasses
+                .filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
+                .forEach {
+                    injector.getInstance(it.java)
+                }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            server.pluginManager.disablePlugin(this)
+            return
+        }
     }
 
     override fun <T : Any> getExistingBinding(type: KClass<T>, qualifier: String?): T? {
@@ -72,6 +75,8 @@ class MinecraftGuiceModule(
         bind(JavaPlugin::class.java).toInstance(plugin)
         bind(GuiceJavaPlugin::class.java).toInstance(plugin)
         bind(DIJavaPlugin::class.java).toInstance(plugin)
+        bind(Plugin::class.java).toInstance(plugin)
+        bind(plugin.javaClass).toInstance(plugin)
         bind(Server::class.java).toInstance(plugin.server)
         bind(ClassLoader::class.java).toInstance(classLoader)
 
