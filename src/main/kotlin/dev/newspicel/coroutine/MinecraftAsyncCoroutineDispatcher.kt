@@ -3,11 +3,11 @@ package dev.newspicel.coroutine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.runBlocking
-import org.bukkit.plugin.java.JavaPlugin
+import org.bukkit.plugin.Plugin
 import kotlin.coroutines.CoroutineContext
 
 class MinecraftAsyncCoroutineDispatcher(
-    private val plugin: JavaPlugin,
+    private val plugin: Plugin,
 ) : CoroutineDispatcher() {
 
     override fun isDispatchNeeded(context: CoroutineContext): Boolean {

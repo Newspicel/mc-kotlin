@@ -7,12 +7,13 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import dev.newspicel.utils.pluginLazy
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-fun JavaPlugin.launch(
+fun Plugin.launch(
     context: CoroutineContext = syncDispatcher,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit,
@@ -24,7 +25,7 @@ fun JavaPlugin.launch(
     return coroutineScope.launch(context, start, block)
 }
 
-suspend fun JavaPlugin.launchAndAwait(
+suspend fun Plugin.launchAndAwait(
     context: CoroutineContext = syncDispatcher,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend CoroutineScope.() -> Unit,
@@ -32,8 +33,8 @@ suspend fun JavaPlugin.launchAndAwait(
     launch(context, start, block).join()
 }
 
-val JavaPlugin.asyncDispatcher: CoroutineDispatcher by pluginLazy { MinecraftAsyncCoroutineDispatcher(this) }
+val Plugin.asyncDispatcher: CoroutineDispatcher by pluginLazy { MinecraftAsyncCoroutineDispatcher(this) }
 
-val JavaPlugin.syncDispatcher: CoroutineDispatcher by pluginLazy { MinecraftCoroutineDispatcher(this) }
+val Plugin.syncDispatcher: CoroutineDispatcher by pluginLazy { MinecraftCoroutineDispatcher(this) }
 
-val JavaPlugin.coroutineScope: CoroutineScope by pluginLazy { CoroutineScopeJavaPluginHelper.createScope(this, this.syncDispatcher) }
+val Plugin.coroutineScope: CoroutineScope by pluginLazy { CoroutineScopeJavaPluginHelper.createScope(this, this.syncDispatcher) }
