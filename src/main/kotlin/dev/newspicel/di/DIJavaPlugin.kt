@@ -10,11 +10,14 @@ import dev.newspicel.di.serverevents.OnEnable
 import dev.newspicel.di.serverevents.OnLoad
 import dev.newspicel.di.serverevents.ServerEventsHelper
 import net.kyori.adventure.text.Component.text
+import org.bukkit.Server
 import org.bukkit.command.CommandSender
+import org.bukkit.plugin.Plugin
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
 import java.util.logging.Level
+import java.util.logging.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotations
@@ -122,6 +125,24 @@ abstract class DIJavaPlugin : JavaPlugin() {
                 }
             }
         }
+    }
+
+    protected fun getDefaultBindings(): Map<KClass<*>, Any> {
+        return mapOf(
+            JavaPlugin::class to this,
+            GuiceJavaPlugin::class to this,
+            DIJavaPlugin::class to this,
+            Plugin::class to this,
+            this::class to this,
+            Server::class to server,
+            ClassLoader::class to classLoader,
+        )
+    }
+
+    protected fun getDefaultAnnotatedBindings(): Map<KClass<*>, Pair<String, Any>> {
+        return mapOf(
+            Logger::class to (PLUGIN_LOGGER_KEY to logger),
+        )
     }
 
     // Lock this stuff down

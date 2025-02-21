@@ -3,10 +3,6 @@ package dev.newspicel.di
 import com.google.inject.*
 import com.google.inject.name.Named
 import com.google.inject.name.Names
-import org.bukkit.Server
-import org.bukkit.plugin.Plugin
-import org.bukkit.plugin.java.JavaPlugin
-import java.util.logging.Logger
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotations
 import kotlin.reflect.jvm.javaConstructor
@@ -16,7 +12,7 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
     private lateinit var injector: Injector
 
     override fun startDependencyInjection() {
-        val module = MinecraftGuiceModule(this, stereotypesClasses, classLoader)
+        val module = MinecraftGuiceModule(getDefaultBindings(), getDefaultAnnotatedBindings(), stereotypesClasses)
 
         try {
             injector = Guice.createInjector(module) ?: error("Could not create Guice injector")
@@ -65,21 +61,18 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 }
 
 class MinecraftGuiceModule(
-    private val plugin: GuiceJavaPlugin,
+    private val defaultBindings: Map<KClass<*>, Any>,
+    private val defaultAnnotatedBindings: Map<KClass<*>, Pair<String, Any>>,
     private val allStereotypes: List<KClass<*>>,
-    private val classLoader: ClassLoader,
 ) : AbstractModule() {
-    @Suppress("UNCHECKED_CAST")
     override fun configure() {
-        bind(JavaPlugin::class.java).toInstance(plugin)
-        bind(GuiceJavaPlugin::class.java).toInstance(plugin)
-        bind(DIJavaPlugin::class.java).toInstance(plugin)
-        bind(Plugin::class.java).toInstance(plugin)
-        bind(plugin.javaClass).toInstance(plugin)
-        bind(Server::class.java).toInstance(plugin.server)
-        bind(ClassLoader::class.java).toInstance(classLoader)
+        defaultBindings.forEach { (type, instance) ->
+            bind(type.java as Class<Any>).toInstance(instance)
+        }
 
-        bind(Logger::class.java).annotatedWith(Names.named("pluginLogger")).toInstance(plugin.logger)
+        defaultAnnotatedBindings.forEach { (type, instance) ->
+            bind(type.java as Class<Any>).annotatedWith(Names.named(instance.first)).toInstance(instance.second)
+        }
 
         allStereotypes.forEach { stereotype ->
             val type = stereotype.java as Class<Any>
