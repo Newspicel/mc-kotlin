@@ -15,8 +15,7 @@ abstract class GuiceJavaPlugin : DIJavaPlugin() {
 
     private lateinit var injector: Injector
 
-    override fun startDI() {
-        logger.info("Starting Guice injector")
+    override fun startDependencyInjection() {
         val module = MinecraftGuiceModule(this, stereotypesClasses, classLoader)
 
         try {

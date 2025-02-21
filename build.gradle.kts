@@ -25,6 +25,11 @@ dependencies {
     implementation(libs.guice)
     implementation(libs.reflections)
 
+    // Logging
+    implementation(libs.slf4j.jdk14)
+
+
+    // Tests
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlin.test.junit5)
     testImplementation(libs.kotlinx.coroutines.test)

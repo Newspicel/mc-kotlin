@@ -14,6 +14,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.plugin.java.JavaPlugin
 import org.reflections.Reflections
 import org.reflections.util.ConfigurationBuilder
+import java.util.logging.Level
 import kotlin.reflect.KClass
 import kotlin.reflect.KParameter
 import kotlin.reflect.full.findAnnotations
@@ -21,34 +22,35 @@ import kotlin.reflect.full.functions
 
 abstract class DIJavaPlugin : JavaPlugin() {
 
-    private val stereotypes = arrayOf(MinecraftController::class, Service::class, Repository::class)
+    private val stereotypes = listOf(MinecraftController::class, Service::class, Repository::class)
 
-    protected lateinit var stereotypesClasses: List<KClass<*>>
-    private lateinit var controllerClasses: List<KClass<*>>
+    protected val stereotypesClasses: List<KClass<*>>
+    private val controllerClasses: List<KClass<*>>
 
-    open val projectPackagePath: String
+    private val projectPackagePath: String
         get() = this.javaClass.`package`.name
 
-    abstract fun startDI()
+    init {
+        stereotypesClasses = scanForMinecraftStereotypes()
+        controllerClasses = stereotypesClasses.filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
+        logger.log(Level.FINE, "Found ${stereotypesClasses.size} Minecraft Stereotypes in $projectPackagePath")
+        startDependencyInjection()
+    }
+
+    abstract fun startDependencyInjection()
     abstract fun <T : Any> getExistingBinding(type: KClass<T>, qualifier: String? = null): T?
     abstract fun <T : Any> getInstance(type: KClass<T>, qualifier: String? = null): T?
 
     abstract fun getQualifier(annotation: List<Annotation>): String?
 
     override fun onLoad() {
-        logger.info("Scanning for Minecraft controllers in $projectPackagePath")
-        stereotypesClasses = scanForMinecraftStereotypes()
-        controllerClasses = stereotypesClasses.filter { it.findAnnotations(MinecraftController::class).isNotEmpty() }
-        logger.info("Found ${stereotypesClasses.size} Minecraft Stereotypes in $projectPackagePath")
-        startDI()
         scanForMinecraftAnnotationsInClassesOnLoad()
-
         ServerEventsHelper.triggerOnLoad(this)
     }
 
     final override fun onEnable() {
-        ServerEventsHelper.triggerOnEnable(this)
         scanForMinecraftAnnotationsInClassesOnEnable()
+        ServerEventsHelper.triggerOnEnable(this)
     }
 
     final override fun onDisable() {
@@ -78,28 +80,6 @@ abstract class DIJavaPlugin : JavaPlugin() {
             ?: error("Could not find a value for parameter ${parameter.name} of type ${parameter.type}")
     }
 
-    private fun scanForMinecraftAnnotationsInClassesOnEnable() {
-        controllerClasses.forEach { clazz ->
-            clazz.functions.forEach { func ->
-                func.annotations.forEach { annotation ->
-                    when (annotation) {
-                        is Command -> {
-                            CommandsHelper.registerCommand(this, annotation, func)
-                        }
-
-                        is TabComplete -> {
-                            CommandsHelper.registerTabComplete(this, annotation, func)
-                        }
-
-                        is Event -> {
-                            EventHelper.registerEvent(this, annotation, func)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     private fun scanForMinecraftAnnotationsInClassesOnLoad() {
         controllerClasses.forEach { clazz ->
             clazz.functions.forEach { func ->
@@ -115,6 +95,28 @@ abstract class DIJavaPlugin : JavaPlugin() {
 
                         is OnLoad -> {
                             ServerEventsHelper.registerOnLoad(func)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun scanForMinecraftAnnotationsInClassesOnEnable() {
+        controllerClasses.forEach { clazz ->
+            clazz.functions.forEach { func ->
+                func.annotations.forEach { annotation ->
+                    when (annotation) {
+                        is Command -> {
+                            CommandsHelper.registerCommand(this, annotation, func)
+                        }
+
+                        is TabComplete -> {
+                            CommandsHelper.registerTabComplete(this, annotation, func)
+                        }
+
+                        is Event -> {
+                            EventHelper.registerEvent(this, annotation, func)
                         }
                     }
                 }
