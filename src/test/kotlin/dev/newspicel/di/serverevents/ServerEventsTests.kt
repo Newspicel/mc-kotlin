@@ -1,13 +1,14 @@
 package dev.newspicel.di.serverevents
 
-import be.seeseemelk.mockbukkit.MockBukkit
-import be.seeseemelk.mockbukkit.ServerMock
-import io.kotest.matchers.shouldBe
 import dev.newspicel.di.TestPlugin
+import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.mockbukkit.mockbukkit.MockBukkit
+import org.mockbukkit.mockbukkit.ServerMock
+
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 open class ServerEventsTests {
 

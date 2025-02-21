@@ -1,16 +1,16 @@
 package dev.newspicel.di
 
-import be.seeseemelk.mockbukkit.MockBukkit
-import be.seeseemelk.mockbukkit.ServerMock
+import dev.newspicel.di.commands.CommandTestController
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import dev.newspicel.di.commands.CommandTestController
 import org.bukkit.Server
 import org.bukkit.plugin.java.JavaPlugin
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.mockbukkit.mockbukkit.MockBukkit
+import org.mockbukkit.mockbukkit.ServerMock
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 class GuiceJavaPluginTest {

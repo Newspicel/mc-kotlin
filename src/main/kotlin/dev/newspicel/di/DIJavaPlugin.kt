@@ -123,15 +123,15 @@ abstract class DIJavaPlugin : JavaPlugin() {
     }
 
     // Lock this stuff down
-    final override fun onTabComplete(sender: CommandSender, command: org.bukkit.command.Command, alias: String, args: Array<out String>?): MutableList<String> {
+    final override fun onTabComplete(sender: CommandSender, command: org.bukkit.command.Command, alias: String, args: Array<out String>): List<String> {
         sender.sendMessage(text("An error occurred while executing this command. Please contact the server administrators."))
-        logger.warning("OnTabComplete was called for ${command.name} with alias $alias and args ${args?.joinToString(", ")} but no tab complete was registered.")
+        logger.warning("OnTabComplete was called for ${command.name} with alias $alias and args ${args.joinToString(", ")} but no tab complete was registered.")
         return emptyList<String>().toMutableList()
     }
 
-    final override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>?): Boolean {
+    final override fun onCommand(sender: CommandSender, command: org.bukkit.command.Command, label: String, args: Array<out String>): Boolean {
         sender.sendMessage(text("An error occurred while executing this command. Please contact the server administrators."))
-        logger.warning("OnCommand was called for ${command.name} with alias $label and args ${args?.joinToString(", ")} but no command was registered.")
+        logger.warning("OnCommand was called for ${command.name} with alias $label and args ${args.joinToString(", ")} but no command was registered.")
         return false
     }
 }
